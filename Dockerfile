@@ -31,6 +31,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.1.6"} \
     TELLDUS_REPO_URL=${TELLDUS_REPO_URL:-"https://github.com/telldus/telldus"} \
     TEMPIO_REPO_URL=${TEMPIO_REPO_URL:-"https://github.com/home-assistant/tempio"} \
     NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
+    NGINX_SITE_ENABLED=homeassistant \
     NGINX_WORKER_PROCESSES=1 \
     IMAGE_NAME=tiredofit/homeassistant \
     IMAGE_REPO_URL=https://github.com/tiredofit/docker-homeassistant
