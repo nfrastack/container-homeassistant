@@ -1,0 +1,21 @@
+services:
+  homeassistant-app:
+    container_name: homeassistant-app
+    image: docker.io/tiredofit/homeassistant:latest
+    ports:
+      - 8123:8123
+    volumes:
+      - ./config:/config
+      - ./logs:/logs
+      - /run/dbus:/run/dbus:ro
+    environment:
+      - TIMEZONE=America/Vancouver
+      - CONTAINER_NAME=homeassistant-app
+    privileged: true
+    networks:
+      - services
+    restart: always
+
+networks:
+  services:
+    external: true
