@@ -5,6 +5,6 @@ prepare_service
 PROCESS_NAME=homeassistant
 
 bootstrap_filesystem
-configure webserver
+configure_webserver
 
 liftoff

@@ -1,6 +1,8 @@
 #!/command/with-contenv bash
 
 CONFIG_PATH=${CONFIG_PATH:-"/config/"}
+CONFIG_CUSTOM_PATH=${CONFIG_CUSTOM_PATH:-"/config-custom/"}
+DATA_PATH=${DATA_PATH:-"/config/"}
 ENABLE_JEMALLOC=${ENABLE_JEMALLOC:-"TRUE"}
 LISTEN_PORT=${LISTEN_PORT:-"8123"}
 LOG_PATH=${LOG_PATH:-"/logs/"}
