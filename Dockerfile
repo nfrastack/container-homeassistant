@@ -142,7 +142,7 @@ RUN source /assets/functions/00-container && \
     mv /usr/src/bashio/lib /usr/lib/bashio && \
     ln -sf /usr/lib/bashio/bashio /usr/bin/bashio && \
     \
-    clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" && \
+    clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" homeassistant && \
     pip install --break-system-packages \
                     Brotli==1.1.0 \
                     faust-cchardet==2.1.19 \
