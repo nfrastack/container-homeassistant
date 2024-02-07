@@ -24,9 +24,7 @@ bootstrap_filesystem() {
 }
 
 configure_webserver() {
-    set -x
     update_template \
                     /etc/nginx/sites.available/homeassistant.conf \
                         LISTEN_PORT
-    set +x
 }

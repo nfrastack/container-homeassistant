@@ -16,6 +16,25 @@ fi
 
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 
+if [ "${LOG_LEVEL,,}" = "verbose" ]; then
+    log_level="--verbose"
+fi
+
+case "${HOMEASSISTANT_MODE}" in
+    debug)
+        homeassistant_mode="--debug"
+    ;;
+    normal)
+        :
+    ;;
+    recovery)
+        homeassistant_mode="--recovery-mode"
+    ;;
+    *)
+        :
+    ;;
+esac
+
 #options:
 #  -h, --help            show this help message and exit
 #  --version             show program's version number and exit
@@ -38,4 +57,5 @@ print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 exec python3 \
             -m homeassistant \
             --config "${CONFIG_PATH}" \
-            --log-file "${LOG_PATH}"/"${LOG_FILE}" ${HOMEASSISTANT_ARGS}
+            --log-rotate-days 0 ${log_level} \
+            --log-file "${LOG_PATH}"/"${LOG_FILE}" ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
