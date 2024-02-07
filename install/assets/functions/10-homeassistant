@@ -20,4 +20,9 @@ bootstrap_filesystem() {
     if [ "$(stat -c %a "${DATA_PATH}")" != "700" ] ; then chmod -R 700 "${DATA_PATH}" ; fi
 
     if [ "$(stat -c %U "${LOG_PATH}")" != "homeassistant" ] ; then chown homeassistant:homeassistant "${LOG_PATH}" ; fi
+    create_logrotate homeassistant "${LOG_PATH}"/"${LOG_FILE}" homeassistant homeassistant homeassistant
+}
+
+configure_webserver() {
+    update_template /etc/nginx/sites.available/homeassistant.conf LISTEN_PORT
 }
