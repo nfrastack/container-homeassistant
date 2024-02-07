@@ -16,7 +16,6 @@ fi
 
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 
-
 #options:
 #  -h, --help            show this help message and exit
 #  --version             show program's version number and exit
@@ -36,4 +35,7 @@ print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 #  --script ...          Run one of the embedded scripts
 #  --ignore-os-check     Skips validation of operating system
 
-exec python3 -m homeassistant --config "${CONFIG_PATH}" ${HOMEASSISTANT_ARGS}
+exec python3 \
+            -m homeassistant \
+            --config "${CONFIG_PATH}" \
+            --log-file "${LOG_PATH}"/"${LOG_FILE}" ${HOMEASSISTANT_ARGS}

@@ -1,5 +1,6 @@
 #!/command/with-contenv bash
 
 CONFIG_PATH=${CONFIG_PATH:-"/config/"}
-LOG_PATH=${LOG_PATH:-"/logs/"}
 ENABLE_JEMALLOC=${ENABLE_JEMALLOC:-"TRUE"}
+LOG_PATH=${LOG_PATH:-"/logs/"}
+LOG_FILE=${LOG_FILE:-"homeassistant.log"}
