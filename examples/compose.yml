@@ -4,14 +4,16 @@ services:
     image: docker.io/tiredofit/homeassistant:latest
     ports:
       - 8123:8123
+      - 8000:80
     volumes:
       - ./config:/config
+      - ./data:/data
       - ./logs:/logs
-      - /run/dbus:/run/dbus:ro
     environment:
       - TIMEZONE=America/Vancouver
       - CONTAINER_NAME=homeassistant-app
-    privileged: true
+
+      - SETUP_MODE=TRUE
     networks:
       - services
     restart: always

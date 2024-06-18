@@ -14,13 +14,11 @@ if var_true "${ENABLE_JEMALLOC}" ; then
   export MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000"
 fi
 
-print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
-
 if [ "${LOG_LEVEL,,}" = "verbose" ]; then
     log_level="--verbose"
 fi
 
-case "${HOMEASSISTANT_MODE}" in
+case "${HOMEASSISTANT_MODE,,}" in
     debug)
         homeassistant_mode="--debug"
     ;;
@@ -35,27 +33,11 @@ case "${HOMEASSISTANT_MODE}" in
     ;;
 esac
 
-#options:
-#  -h, --help            show this help message and exit
-#  --version             show program's version number and exit
-#  -c path_to_config_dir, --config path_to_config_dir
-#                        Directory that contains the Home Assistant configuration
-#  --recovery-mode       Start Home Assistant in recovery mode
-#  --debug               Start Home Assistant in debug mode
-#  --open-ui             Open the webinterface in a browser
-#  --skip-pip            Skips pip install of required packages on startup
-#  --skip-pip-packages package_names
-#                        Skip pip install of specific packages on startup
-#  -v, --verbose         Enable verbose logging to file.
-#  --log-rotate-days LOG_ROTATE_DAYS
-#                        Enables daily log rotation and keeps up to the specified days
-#  --log-file LOG_FILE   Log file to write to. If not set, CONFIG/home-assistant.log is used
-#  --log-no-color        Disable color logs
-#  --script ...          Run one of the embedded scripts
-#  --ignore-os-check     Skips validation of operating system
+print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 
 exec python3 \
             -m homeassistant \
             --config "${CONFIG_PATH}" \
             --log-rotate-days 0 ${log_level} \
-            --log-file "${LOG_PATH}"/"${LOG_FILE}" ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
+            --log-file "${LOG_PATH}"/"${LOG_FILE}" \
+            --skip-pip ${homeassistant_mode} ${HOMEASSISTANT_ARGS}

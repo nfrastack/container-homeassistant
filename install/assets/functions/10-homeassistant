@@ -23,8 +23,28 @@ bootstrap_filesystem() {
     create_logrotate homeassistant "${LOG_PATH}"/"${LOG_FILE}" homeassistant homeassistant homeassistant
 }
 
+configure_homeassistant() {
+    if [ "${SETUP_MODE,,}" = "auto" ] ; then
+        if [ ! -f "${CONFIG_PATH}"/configuration.yaml ]; then
+            print_info "Generating Initial Home Assistant Configuration"
+            cat <<EOF | silent sudo -u homeassistant "${CONFIG_PATH}"/configuration.yaml
+## Home Assistant Configuration
+## Generated for version ${HOMEASSISTANT_VERSION} from ${IMAGE_NAME} on $(TZ=${TIMEZONE} date +'%Y-%m-%d %H:%M:%S %Z')
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+EOF
+        fi
+    fi
+}
+
 configure_webserver() {
     update_template \
                     /etc/nginx/sites.available/homeassistant.conf \
                         LISTEN_PORT
 }
+
