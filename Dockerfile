@@ -80,9 +80,6 @@ RUN source /assets/functions/00-container && \
     adduser -S -D -H -u 4663 -G homeassistant -g "Home Assistant" homeassistant && \
     package install .container-run-deps \
                         bind-tools \
-                        #bluez \
-                        #bluez-deprecated \
-                        #bluez-libs \
                         cups-libs \
                         eudev-libs \
                         ffmpeg \
@@ -106,7 +103,6 @@ RUN source /assets/functions/00-container && \
                         openssh-client \
                         openssl \
                         pianobar \
-                        #pulseaudio-alsa \
                         py3-libcec \
                         socat \
                         tiff \
@@ -212,7 +208,6 @@ RUN source /assets/functions/00-container && \
     NUMPY_VER=$(grep "numpy" requirements_all.txt) && \
     PYCUPS_VER=$(grep "pycups" requirements_all.txt | sed 's|.*==||') && \
     \
-    #pip install -r requirements.txt --break-system-packages && \
     ## HACK Until a better version >1.2.3 of webrtc-noise-gain
     pip install git+https://github.com/rhasspy/webrtc-noise-gain --break-system-packages && \
     pip install --break-system-packages "${NUMPY_VER}" && \
@@ -232,14 +227,7 @@ RUN source /assets/functions/00-container && \
             -r requirements_custom.txt \
             -r requirements.txt \
             && \
-    #pip install -r requirements_all.txt --break-system-packages && \
-    #pip install -e ./ --break-system-packages && \
-    #pip install --only-binary=:all: -e ./ --break-system-packages && \
-    #python3 -m \
-    #            compileall \
-    #            homeassistant \
-    #            && \
-    #pip install --break-system-packages homeassistant==${HOMEASSISTANT_VERSION} && \
+    \
     sed -i \
             -e '/"google_translate",/d' \
             -e '/"met",/d' \
