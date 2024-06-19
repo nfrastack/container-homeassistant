@@ -79,22 +79,18 @@ RUN source /assets/functions/00-container && \
     addgroup -S -g 4663 homeassistant && \
     adduser -S -D -H -u 4663 -G homeassistant -g "Home Assistant" homeassistant && \
     package install .container-run-deps \
-                        bind-tools \
-                        cups-libs \
-                        eudev-libs \
-                        ffmpeg \
+                        #bind-tools \
+                        #cups-libs \
                         git \
                         grep \
                         hwdata-usb \
                         iperf3 \
                         iputils \
-                        isa-l \
                         jq \
                         libcap \
                         libgpiod \
                         libpulse \
                         libstdc++ \
-                        libturbojpeg \
                         libxslt \
                         libzbar \
                         mariadb-connector-c \
@@ -106,12 +102,11 @@ RUN source /assets/functions/00-container && \
                         py3-libcec \
                         socat \
                         tiff \
-                        zlib-ng \
                     && \
     \
     package install .homeassistant-build-deps \
-                        cargo \
-                        cups-dev \
+                        #cargo \
+                        #cups-dev \
                         cython \
                         ffmpeg-dev \
                         gcc \
@@ -119,6 +114,7 @@ RUN source /assets/functions/00-container && \
                         linux-headers \
                         isa-l-dev \
                         jpeg-dev \
+                        libturbojpeg-dev \
                         make \
                         mariadb-connector-c-dev \
                         musl-dev \
@@ -135,10 +131,15 @@ RUN source /assets/functions/00-container && \
                     && \
     \
     package install .homeassistant-run-deps \
+                        eudev-libs \
+                        ffmpeg \
+                        isa-l \
+                        libturbojpeg \
                         mariadb-connector-c \
                         postgresql-client \
-                        python3 \
                         py3-pip \
+                        python3 \
+                        zlib-ng \
                     && \
     \
     package install .homeassistant-cli-build-deps \
