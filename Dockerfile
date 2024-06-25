@@ -33,6 +33,8 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             file_upload, \
                                                             ffmpeg, \
                                                             frontend, \
+                                                            garmin_connect,
+                                                            hacs, \
                                                             haffmpeg, \
                                                             http, \
                                                             image, \
@@ -40,6 +42,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             jellyfin, \
                                                             logbook, \
                                                             meater, \
+                                                            midea_ac, \
                                                             mobile_app, \
                                                             mqtt, \
                                                             openweathermap, \
@@ -49,6 +52,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             stream, \
                                                             tts, \
                                                             tuya, \
+                                                            utility_meter, \
                                                             xbox, \
                                                             zha \
                                                             "} \
