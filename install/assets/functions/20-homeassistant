@@ -4,19 +4,19 @@ bootstrap_filesystem() {
     if [ ! -d "${CONFIG_PATH}" ] ; then
         mkdir -p "${CONFIG_PATH}"
     fi
-    if [ "$(stat -c %U "${CONFIG_PATH}")" != "homeassistant" ] ; then silent chown -R homeassistant:homeassistant "${CONFIG_PATH}" ; fi
+    if [ "$(stat -c %U "${CONFIG_PATH}")" != "homeassistant" ] ; then silent chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" "${CONFIG_PATH}" ; fi
     if [ "$(stat -c %a "${CONFIG_PATH}")" != "755" ] ; then chmod -R 755 "${CONFIG_PATH}" ; fi
 
     if [ ! -d "${CONFIG_CUSTOM_PATH}" ] ; then
         mkdir -p "${CONFIG_CUSTOM_PATH}"
     fi
-    if [ "$(stat -c %U "${CONFIG_CUSTOM_PATH}")" != "homeassistant" ] ; then silent chown -R homeassistant:homeassistant "${CONFIG_CUSTOM_PATH}" ; fi
+    if [ "$(stat -c %U "${CONFIG_CUSTOM_PATH}")" != "homeassistant" ] ; then silent chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" "${CONFIG_CUSTOM_PATH}" ; fi
     if [ "$(stat -c %a "${CONFIG_CUSTOM_PATH}")" != "755" ] ; then chmod -R 755 "${CONFIG_CUSTOM_PATH}" ; fi
 
     if [ ! -d "${DATA_PATH}" ] ; then
         mkdir -p "${DATA_PATH}"
     fi
-    if [ "$(stat -c %U "${DATA_PATH}")" != "homeassistant" ] ; then chown -R homeassistant:homeassistant "${DATA_PATH}" ; fi
+    if [ "$(stat -c %U "${DATA_PATH}")" != "homeassistant" ] ; then chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" "${DATA_PATH}" ; fi
     if [ "$(stat -c %a "${DATA_PATH}")" != "700" ] ; then chmod -R 700 "${DATA_PATH}" ; fi
 
     if [ "$(stat -c %U "${LOG_PATH}")" != "homeassistant" ] ; then chown homeassistant:homeassistant "${LOG_PATH}" ; fi
@@ -27,7 +27,7 @@ configure_homeassistant() {
     if [ "${SETUP_MODE,,}" = "auto" ] ; then
         if [ ! -f "${CONFIG_PATH}"/configuration.yaml ]; then
             print_info "Generating Initial Home Assistant Configuration"
-            cat <<EOF | silent sudo -u homeassistant "${CONFIG_PATH}"/configuration.yaml
+            cat <<EOF | silent sudo -u "${HOMEASSISTANT_USER}" tee "${CONFIG_PATH}"/configuration.yaml
 ## Home Assistant Configuration
 ## Generated for version ${HOMEASSISTANT_VERSION} from ${IMAGE_NAME} on $(TZ=${TIMEZONE} date +'%Y-%m-%d %H:%M:%S %Z')
 

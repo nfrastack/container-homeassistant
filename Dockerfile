@@ -19,6 +19,19 @@ ARG HOMEASSISTANT_MODULES
 
 ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.34.0"} \
+    HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
+                                                            environment_canada, \
+                                                            esphome, \
+                                                            github, \
+                                                            jellyfin, \
+                                                            meater, \
+                                                            mqtt, \
+                                                            roku, \
+                                                            tuya, \
+                                                            xbox, \
+                                                            zha \
+                                                            "} \
+    \
     HOMEASSISTANT_COMPONENTS_CORE=${HOMEASSISTANT_COMPONENTS_CORE:-" \
                                                             accuweather, \
                                                             assist_pipeline,\
@@ -32,38 +45,28 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             dhcp, \
                                                             discovery, \
                                                             environment_canada, \
-                                                            esphome, \
                                                             file_upload, \
                                                             ffmpeg, \
                                                             frontend, \
-                                                            garmin_connect, \
-                                                            github, \
-                                                            hacs, \
                                                             haffmpeg, \
                                                             http, \
                                                             image, \
                                                             isal, \
-                                                            jellyfin, \
                                                             logbook, \
-                                                            meater, \
-                                                            midea_ac, \
                                                             mobile_app, \
-                                                            mqtt, \
                                                             openweathermap, \
                                                             recorder, \
-                                                            roku, \
                                                             ssdp, \
                                                             stream, \
                                                             tts, \
-                                                            tuya, \
                                                             utility_meter, \
-                                                            xbox, \
-                                                            zha \
                                                             "} \
     HOMEASSISTANT_MODULES_CORE=${HOMEASSISTANT_MODULES_CORE:-" \
-                                                                homeassistant.auth.mfa_modules.totp \
+                                                                homeassistant.auth.mfa_modules.totp, \
                                                                 psycopg2 \
                                                                 "} \
+    HOMEASSISTANT_USER=${HOMEASSISTANT_USER:-"homeassistant"} \
+    HOMEASSISTANT_GROUP=${HOMEASSISTANT_GROUP:-"homeassistant"} \
     BASHIO_VERSION=${BASHIO_VERSION:-"v0.16.2"} \
     JEMALLOC_VERSION=${JEMALLOC_VERSION:-"5.3.0"} \
     PICOTTS_VERSION=${PICOTTS_VERSION:-"21089d223e177ba3cb7e385db8613a093dff74b5"} \
@@ -85,8 +88,8 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
 
 RUN source /assets/functions/00-container && \
     set -x && \
-    addgroup -S -g 4663 homeassistant && \
-    adduser -S -D -H -u 4663 -G homeassistant -g "Home Assistant" homeassistant && \
+    addgroup -S -g 4663 ${HOMEASSISTANT_GROUP} && \
+    adduser -S -D -H -h /opt/homeassistant -u 4663 -G ${HOMEASSISTANT_GROUP} -g "Home Assistant" ${HOMEASSISTANT_USER} && \
     package install .container-run-deps \
                         #bind-tools \
                         git \
@@ -118,8 +121,6 @@ RUN source /assets/functions/00-container && \
                         && \
     \
     package install .homeassistant-build-deps \
-                        #cargo \
-                        #cups-dev \
                         cython \
                         ffmpeg-dev \
                         gcc \
@@ -204,7 +205,7 @@ RUN source /assets/functions/00-container && \
     #                && \
     #\
     echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
-
+    \
     clone_git_repo "${JEMALLOC_REPO_URL}" "${JEMALLOC_VERSION}" && \
     ./autogen.sh \
                 --with-lg-page=16 \
@@ -212,28 +213,17 @@ RUN source /assets/functions/00-container && \
     make -j "$(nproc)" && \
     make install_lib_shared install_bin && \
     \
-    #clone_git_repo "${BASHIO_REPO_URL}" "${BASHIO_VERSION}" && \
-    #mv /usr/src/bashio/lib /usr/lib/bashio && \
-    #ln -sf /usr/lib/bashio/bashio /usr/bin/bashio && \
-    \
     cd /usr/src/ && \
     clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" homeassistant && \
-    #pip install --break-system-packages \
-    #                faust-cchardet==2.1.19 \
-    #                && \
-    \
-    #NUMPY_VER=$(grep "numpy" requirements_all.txt) && \
-    #PYCUPS_VER=$(grep "pycups" requirements_all.txt | sed 's|.*==||') && \
     \
     python3 -m venv /opt/homeassistant && \
-    #/opt/homeassistant/bin/pip install  && \
-    #pip install --break-system-packages "${NUMPY_VER}" && \
-    #pip install --break-system-packages pycups==${PYCUPS_VER}
+    chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
     cd /usr/src/homeassistant && \
     export HOMEASSISTANT_COMPONENTS_CORE=$(echo components.${HOMEASSISTANT_COMPONENTS_CORE} | sed -e 's|, |\| components.|g' -e 's| ||g') && \
     echo "## Core" >> requirements_custom.txt && \
     awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS_CORE"]' requirements_all.txt >> requirements_custom.txt && \
     echo "## Core Modules" >> requirements_custom.txt && \
+    export HOMEASSISTANT_MODULES_CORE=$(echo ${HOMEASSISTANT_MODULES_CORE} | sed -e 's|, |\| |g' -e 's| ||g') ; \
     awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES_CORE"]' requirements_all.txt >> requirements_custom.txt && \
     if [ -n "${HOMEASSISTANT_COMPONENTS}" ]; then \
         echo "## User Components" >> requirements_custom.txt ; \
@@ -242,6 +232,7 @@ RUN source /assets/functions/00-container && \
     fi; \
     if [ -n "${HOMEASSISTANT_MODULES}" ]; then \
         echo "## User Modules" >> requirements_custom.txt ; \
+        export HOMEASSISTANT_MODULES=$(echo ${HOMEASSISTANT_MODULES} | sed -e 's|, |\| |g' -e 's| ||g') ; \
         awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES"]' requirements_all.txt >> requirements_custom.txt ; \
     fi; \
     echo "homeassistant==${HOMEASSISTANT_VERSION}" >> requirements_custom.txt && \
@@ -250,37 +241,23 @@ RUN source /assets/functions/00-container && \
     export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
     LD_PRELOAD="/usr/local/lib/libjemalloc.so.2" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
-        /opt/homeassistant/bin/pip install \
-            --compile \
-            --no-warn-script-location \
-            -r requirements.txt \
-            -r requirements_custom.txt \
-            git+https://github.com/rhasspy/webrtc-noise-gain \
-            ## HACK Until a better version >1.2.3 of webrtc-noise-gain \
-            && \
+        sudo -u "${HOMEASSISTANT_USER}" \
+            /opt/homeassistant/bin/pip install \
+                --compile \
+                --no-warn-script-location \
+                -r requirements.txt \
+                -r requirements_custom.txt \
+                git+https://github.com/rhasspy/webrtc-noise-gain \
+                ## HACK Until a better version >1.2.3 of webrtc-noise-gain \
+                && \
     \
-
-
-    #pip install --break-system-packages \
-    #        --compile \
-    #        aiogithubapi>=21.11.0 \
-    #        aiohttp>=3.8.3,\<4.0 \
-    #        aiohttp_cors==0.7.0 \
-    #        async-timeout>=4.0.2 \
-    #        asynctest==0.13.0 \
-    #        awscli==1.33.13 \
-    #        colorlog==6.8.2 \
-    #        setuptools==70.1.0 \
-    #        garminconnect \
-    #        msmart \
-    #        croniter \
-    #        && \
-    sed -i \
-            -e '/"google_translate",/d' \
-            -e '/"met",/d' \
-            -e '/"radio_browser",/d' \
-            -e '/"shopping_list",/d' \
-            /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
+    sudo -u "${HOMEASSISTANT_USER}" \
+        sed -i \
+                -e '/"google_translate",/d' \
+                -e '/"met",/d' \
+                -e '/"radio_browser",/d' \
+                -e '/"shopping_list",/d' \
+                /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     \
     cd /usr/src && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
@@ -320,14 +297,18 @@ RUN source /assets/functions/00-container && \
     #go build -ldflags '-s' -o /usr/bin/tempio && \
     \
     package remove \
-                    .jemalloc-build-deps \
                     .homeassistant-build-deps \
                     .homeassistant-cli-build-deps \
+                    .jemalloc-build-deps \
                     #.picotts-build-deps \
                     #.ssocr-build-deps \
                     #.telldus-build-deps \
                     #.tempio-build-deps \
                     && \
-    package cleanup
+    package cleanup && \
+    rm -rf \
+            /root/go \
+            /root/.cache \
+            /usr/src/*
 
 COPY install /
