@@ -14,10 +14,12 @@ ARG PICOTTS_VERSION
 ARG SSOCR_VERSION
 ARG TELLDUS_VERSION
 ARG TEMPIO_VERSION
+ARG HOMEASSISTANT_COMPONENTS
+ARG HOMEASSISTANT_MODULES
 
 ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.34.0"} \
-    HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
+    HOMEASSISTANT_COMPONENTS_CORE=${HOMEASSISTANT_COMPONENTS_CORE:-" \
                                                             accuweather, \
                                                             assist_pipeline,\
                                                             backup, \
@@ -25,6 +27,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             bluetooth_tracker, \
                                                             camera, \
                                                             compensation, \
+                                                            check_config, \
                                                             conversation, \
                                                             dhcp, \
                                                             discovery, \
@@ -33,7 +36,8 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             file_upload, \
                                                             ffmpeg, \
                                                             frontend, \
-                                                            garmin_connect,
+                                                            garmin_connect, \
+                                                            github, \
                                                             hacs, \
                                                             haffmpeg, \
                                                             http, \
@@ -56,6 +60,10 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
                                                             xbox, \
                                                             zha \
                                                             "} \
+    HOMEASSISTANT_MODULES_CORE=${HOMEASSISTANT_MODULES_CORE:-" \
+                                                                homeassistant.auth.mfa_modules.totp \
+                                                                psycopg2 \
+                                                                "} \
     BASHIO_VERSION=${BASHIO_VERSION:-"v0.16.2"} \
     JEMALLOC_VERSION=${JEMALLOC_VERSION:-"5.3.0"} \
     PICOTTS_VERSION=${PICOTTS_VERSION:-"21089d223e177ba3cb7e385db8613a093dff74b5"} \
@@ -73,10 +81,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
     NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
     NGINX_SITE_ENABLED=homeassistant \
     NGINX_WORKER_PROCESSES=1 \
-    IMAGE_NAME=tiredofit/homeassistant \
-    IMAGE_REPO_URL=https://github.com/tiredofit/docker-homeassistant
-
-COPY patches /usr/src/patches
+    IMAGE_NAME=tiredofit/homeassistant
 
 RUN source /assets/functions/00-container && \
     set -x && \
@@ -84,7 +89,6 @@ RUN source /assets/functions/00-container && \
     adduser -S -D -H -u 4663 -G homeassistant -g "Home Assistant" homeassistant && \
     package install .container-run-deps \
                         #bind-tools \
-                        #cups-libs \
                         git \
                         grep \
                         hwdata-usb \
@@ -108,6 +112,11 @@ RUN source /assets/functions/00-container && \
                         tiff \
                     && \
     \
+    package install .jemalloc-build-deps \
+                        autoconf \
+                        make \
+                        && \
+    \
     package install .homeassistant-build-deps \
                         #cargo \
                         #cups-dev \
@@ -118,7 +127,8 @@ RUN source /assets/functions/00-container && \
                         linux-headers \
                         isa-l-dev \
                         jpeg-dev \
-                        libturbojpeg-dev \
+                        libffi-dev \
+                        libjpeg-turbo-dev \
                         make \
                         mariadb-connector-c-dev \
                         musl-dev \
@@ -141,7 +151,10 @@ RUN source /assets/functions/00-container && \
                         libturbojpeg \
                         mariadb-connector-c \
                         postgresql-client \
+                        py3-brotli \
+                        py3-mysqlclient \
                         py3-pip \
+                        py3-psycopg2 \
                         python3 \
                         zlib-ng \
                     && \
@@ -150,46 +163,48 @@ RUN source /assets/functions/00-container && \
                         go \
                     && \
     \
-    package install .picotts-build-deps \
-                        automake \
-                        autoconf \
-                        build-base \
-                        libtool \
-                        popt-dev \
-                    && \
+    #package install .picotts-build-deps \
+    #                    automake \
+    #                    autoconf \
+    #                    build-base \
+    #                    libtool \
+    #                    popt-dev \
+    #                && \
+    #\
+    #package install .picotts-run-deps \
+    #                    popt \
+    #                && \
+    #\
+    #package install .ssocr-build-deps \
+    #                    build-base \
+    #                    imlib2-dev \
+    #                    libx11-dev \
+    #                && \
+    #\
+    #package install .ssocr-run-deps \
+    #                    imlib2 \
+    #                && \
+    #\
+    #package install .telldus-build-deps \
+    #                    argp-standalone \
+    #                    build-base \
+    #                    cmake \
+    #                    confuse-dev \
+    #                    doxygen \
+    #                    libftdi1-dev \
+    #                && \
     \
-    package install .picotts-run-deps \
-                        popt \
-                    && \
+    #package install .telldus-run-deps \
+    #                    confuse \
+    #                    libftdi1 \
+    #                && \
     \
-    package install .ssocr-build-deps \
-                        build-base \
-                        imlib2-dev \
-                        libx11-dev \
-                    && \
-    \
-    package install .ssocr-run-deps \
-                        imlib2 \
-                    && \
-    \
-    package install .telldus-build-deps \
-                        argp-standalone \
-                        build-base \
-                        cmake \
-                        confuse-dev \
-                        doxygen \
-                        libftdi1-dev \
-                    && \
-    \
-    package install .telldus-run-deps \
-                        confuse \
-                        libftdi1 \
-                    && \
-    \
-    package install .tempio-build-deps \
-                        go \
-                    && \
-    \
+    #package install .tempio-build-deps \
+    #                    go \
+    #                && \
+    #\
+    echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
+
     clone_git_repo "${JEMALLOC_REPO_URL}" "${JEMALLOC_VERSION}" && \
     ./autogen.sh \
                 --with-lg-page=16 \
@@ -197,48 +212,75 @@ RUN source /assets/functions/00-container && \
     make -j "$(nproc)" && \
     make install_lib_shared install_bin && \
     \
-    clone_git_repo "${BASHIO_REPO_URL}" "${BASHIO_VERSION}" && \
-    mv /usr/src/bashio/lib /usr/lib/bashio && \
-    ln -sf /usr/lib/bashio/bashio /usr/bin/bashio && \
+    #clone_git_repo "${BASHIO_REPO_URL}" "${BASHIO_VERSION}" && \
+    #mv /usr/src/bashio/lib /usr/lib/bashio && \
+    #ln -sf /usr/lib/bashio/bashio /usr/bin/bashio && \
     \
     cd /usr/src/ && \
     clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" homeassistant && \
-    pip install --break-system-packages \
-                    Brotli==1.1.0 \
-                    faust-cchardet==2.1.19 \
-                    mysqlclient==2.2.1 \
-                    psycopg2==2.9.9 \
-                    && \
+    #pip install --break-system-packages \
+    #                faust-cchardet==2.1.19 \
+    #                && \
     \
-    NUMPY_VER=$(grep "numpy" requirements_all.txt) && \
-    PYCUPS_VER=$(grep "pycups" requirements_all.txt | sed 's|.*==||') && \
+    #NUMPY_VER=$(grep "numpy" requirements_all.txt) && \
+    #PYCUPS_VER=$(grep "pycups" requirements_all.txt | sed 's|.*==||') && \
     \
-    ## HACK Until a better version >1.2.3 of webrtc-noise-gain
-    pip install git+https://github.com/rhasspy/webrtc-noise-gain --break-system-packages && \
-    pip install --break-system-packages "${NUMPY_VER}" && \
+    python3 -m venv /opt/homeassistant && \
+    #/opt/homeassistant/bin/pip install  && \
+    #pip install --break-system-packages "${NUMPY_VER}" && \
     #pip install --break-system-packages pycups==${PYCUPS_VER}
     cd /usr/src/homeassistant && \
-    export HOMEASSISTANT_COMPONENTS=$(echo components.${HOMEASSISTANT_COMPONENTS} | sed -e 's|, |\| components.|g' -e 's| ||g') && \
-    awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS"]' requirements_all.txt >> requirements_custom.txt && \
+    export HOMEASSISTANT_COMPONENTS_CORE=$(echo components.${HOMEASSISTANT_COMPONENTS_CORE} | sed -e 's|, |\| components.|g' -e 's| ||g') && \
+    echo "## Core" >> requirements_custom.txt && \
+    awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS_CORE"]' requirements_all.txt >> requirements_custom.txt && \
+    echo "## Core Modules" >> requirements_custom.txt && \
+    awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES_CORE"]' requirements_all.txt >> requirements_custom.txt && \
+    if [ -n "${HOMEASSISTANT_COMPONENTS}" ]; then \
+        echo "## User Components" >> requirements_custom.txt ; \
+        export HOMEASSISTANT_COMPONENTS=$(echo components.${HOMEASSISTANT_COMPONENTS} | sed -e 's|, |\| components.|g' -e 's| ||g') ; \
+        awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS"]' requirements_all.txt >> requirements_custom.txt ; \
+    fi; \
+    if [ -n "${HOMEASSISTANT_MODULES}" ]; then \
+        echo "## User Modules" >> requirements_custom.txt ; \
+        awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES"]' requirements_all.txt >> requirements_custom.txt ; \
+    fi; \
     echo "homeassistant==${HOMEASSISTANT_VERSION}" >> requirements_custom.txt && \
     mkdir -p /assets/.changelogs && \
     cp requirements_custom.txt /assets/.changelogs && \
+    export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
     LD_PRELOAD="/usr/local/lib/libjemalloc.so.2" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
-        pip install \
-            --break-system-packages \
+        /opt/homeassistant/bin/pip install \
             --compile \
             --no-warn-script-location \
-            -r requirements_custom.txt \
             -r requirements.txt \
+            -r requirements_custom.txt \
+            git+https://github.com/rhasspy/webrtc-noise-gain \
+            ## HACK Until a better version >1.2.3 of webrtc-noise-gain \
             && \
     \
+
+
+    #pip install --break-system-packages \
+    #        --compile \
+    #        aiogithubapi>=21.11.0 \
+    #        aiohttp>=3.8.3,\<4.0 \
+    #        aiohttp_cors==0.7.0 \
+    #        async-timeout>=4.0.2 \
+    #        asynctest==0.13.0 \
+    #        awscli==1.33.13 \
+    #        colorlog==6.8.2 \
+    #        setuptools==70.1.0 \
+    #        garminconnect \
+    #        msmart \
+    #        croniter \
+    #        && \
     sed -i \
             -e '/"google_translate",/d' \
             -e '/"met",/d' \
             -e '/"radio_browser",/d' \
-            -e  '/"shopping_list",/d' \
-            /usr/lib/python3.12/site-packages/homeassistant/components/onboarding/views.py && \
+            -e '/"shopping_list",/d' \
+            /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     \
     cd /usr/src && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
@@ -247,43 +289,44 @@ RUN source /assets/functions/00-container && \
             -o /usr/bin/ha-cli \
             && \
     \
-    clone_git_repo "${PICOTTS_REPO_URL}" "${PICOTTS_VERSION}" && \
-    cd pico && \
-    ./autogen.sh && \
-    ./configure \
-        --disable-static \
-        && \
-    make && \
-    make install && \
+    #clone_git_repo "${PICOTTS_REPO_URL}" "${PICOTTS_VERSION}" && \
+    #cd pico && \
+    #./autogen.sh && \
+    #./configure \
+    #    --disable-static \
+    #    && \
+    #make && \
+    #make install && \
+    #\
+    #clone_git_repo "${SSOCR_REPO_URL}" "${SSOCR_VERSION}" && \
+    #make -j"$(nproc)" && \
+    #cp -R ssocr /usr/bin/ssocr && \
+    #\
+    #clone_git_repo "${TELLDUS_REPO_URL}" "${TELLDUS_VERSION}" && \
+    #git apply ../patches/telldus-gcc11.patch && \
+    #git apply ../patches/telldus-alpine.patch && \
+    #cd telldus-core && \
+    #cmake . \
+    #        -DBUILD_LIBTELLDUS-CORE=ON \
+    #        -DBUILD_TDADMIN=OFF \
+    #        -DBUILD_TDTOOL=OFF \
+    #        -DFORCE_COMPILE_FROM_TRUNK=ON \
+    #        -DGENERATE_MAN=OFF \
+    #        && \
+    #make -j"$(nproc)" && \
+    #make install && \
     \
-    clone_git_repo "${SSOCR_REPO_URL}" "${SSOCR_VERSION}" && \
-    make -j"$(nproc)" && \
-    cp -R ssocr /usr/bin/ssocr && \
-    \
-    clone_git_repo "${TELLDUS_REPO_URL}" "${TELLDUS_VERSION}" && \
-    git apply ../patches/telldus-gcc11.patch && \
-    git apply ../patches/telldus-alpine.patch && \
-    cd telldus-core && \
-    cmake . \
-            -DBUILD_LIBTELLDUS-CORE=ON \
-            -DBUILD_TDADMIN=OFF \
-            -DBUILD_TDTOOL=OFF \
-            -DFORCE_COMPILE_FROM_TRUNK=ON \
-            -DGENERATE_MAN=OFF \
-            && \
-    make -j"$(nproc)" && \
-    make install && \
-    \
-    clone_git_repo "${TEMPIO_REPO_URL}" "${TEMPIO_VERSION}" && \
-    go build -ldflags '-s' -o /usr/bin/tempio && \
+    #clone_git_repo "${TEMPIO_REPO_URL}" "${TEMPIO_VERSION}" && \
+    #go build -ldflags '-s' -o /usr/bin/tempio && \
     \
     package remove \
+                    .jemalloc-build-deps \
                     .homeassistant-build-deps \
                     .homeassistant-cli-build-deps \
-                    .picotts-build-deps \
-                    .ssocr-build-deps \
-                    .telldus-build-deps \
-                    .tempio-build-deps \
+                    #.picotts-build-deps \
+                    #.ssocr-build-deps \
+                    #.telldus-build-deps \
+                    #.tempio-build-deps \
                     && \
     package cleanup
 

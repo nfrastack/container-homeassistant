@@ -1,7 +1,7 @@
 #!/command/with-contenv bash
 
 source /assets/functions/00-container
-prepare_service defaults 10-homeassistant
+prepare_service defaults 20-homeassistant
 PROCESS_NAME="homeassistant"
 
 check_container_initialized
@@ -33,11 +33,13 @@ case "${HOMEASSISTANT_MODE,,}" in
     ;;
 esac
 
+if var_true "${SKIP_PIP,,}" ; then skip_pip="--skip-pip"; fi
+
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 
-exec python3 \
+exec /opt/homeassistant/bin/python3 \
             -m homeassistant \
             --config "${CONFIG_PATH}" \
             --log-rotate-days 0 ${log_level} \
             --log-file "${LOG_PATH}"/"${LOG_FILE}" \
-            --skip-pip ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
+            ${skip_pip} ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
