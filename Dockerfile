@@ -17,7 +17,7 @@ ARG TEMPIO_VERSION
 ARG HOMEASSISTANT_COMPONENTS
 ARG HOMEASSISTANT_MODULES
 
-ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.6.4"} \
+ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.7.0"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.34.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \
@@ -280,8 +280,8 @@ RUN source /assets/functions/00-container && \
     #cp -R ssocr /usr/bin/ssocr && \
     #\
     #clone_git_repo "${TELLDUS_REPO_URL}" "${TELLDUS_VERSION}" && \
-    #git apply ../patches/telldus-gcc11.patch && \
     #git apply ../patches/telldus-alpine.patch && \
+    #git apply ../patches/telldus-gcc11.patch && \
     #cd telldus-core && \
     #cmake . \
     #        -DBUILD_LIBTELLDUS-CORE=ON \
@@ -307,8 +307,8 @@ RUN source /assets/functions/00-container && \
                     && \
     package cleanup && \
     rm -rf \
-            /root/go \
             /root/.cache \
+            /root/go \
             /usr/src/*
 
 COPY install /
