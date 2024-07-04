@@ -91,7 +91,6 @@ RUN source /assets/functions/00-container && \
     addgroup -S -g 4663 ${HOMEASSISTANT_GROUP} && \
     adduser -S -D -H -h /opt/homeassistant -u 4663 -G ${HOMEASSISTANT_GROUP} -g "Home Assistant" ${HOMEASSISTANT_USER} && \
     package install .container-run-deps \
-                        #bind-tools \
                         git \
                         grep \
                         hwdata-usb \
@@ -99,7 +98,7 @@ RUN source /assets/functions/00-container && \
                         iputils \
                         jq \
                         libcap \
-                        libgpiod \
+                        #libgpiod \
                         libpulse \
                         libstdc++ \
                         libxslt \
@@ -107,7 +106,7 @@ RUN source /assets/functions/00-container && \
                         mariadb-connector-c \
                         net-tools \
                         nmap \
-                        openssh-client \
+                        #openssh-client \
                         openssl \
                         pianobar \
                         py3-libcec \
@@ -164,46 +163,6 @@ RUN source /assets/functions/00-container && \
                         go \
                     && \
     \
-    #package install .picotts-build-deps \
-    #                    automake \
-    #                    autoconf \
-    #                    build-base \
-    #                    libtool \
-    #                    popt-dev \
-    #                && \
-    #\
-    #package install .picotts-run-deps \
-    #                    popt \
-    #                && \
-    #\
-    #package install .ssocr-build-deps \
-    #                    build-base \
-    #                    imlib2-dev \
-    #                    libx11-dev \
-    #                && \
-    #\
-    #package install .ssocr-run-deps \
-    #                    imlib2 \
-    #                && \
-    #\
-    #package install .telldus-build-deps \
-    #                    argp-standalone \
-    #                    build-base \
-    #                    cmake \
-    #                    confuse-dev \
-    #                    doxygen \
-    #                    libftdi1-dev \
-    #                && \
-    \
-    #package install .telldus-run-deps \
-    #                    confuse \
-    #                    libftdi1 \
-    #                && \
-    \
-    #package install .tempio-build-deps \
-    #                    go \
-    #                && \
-    #\
     echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
     \
     clone_git_repo "${JEMALLOC_REPO_URL}" "${JEMALLOC_VERSION}" && \
@@ -266,44 +225,10 @@ RUN source /assets/functions/00-container && \
             -o /usr/bin/ha-cli \
             && \
     \
-    #clone_git_repo "${PICOTTS_REPO_URL}" "${PICOTTS_VERSION}" && \
-    #cd pico && \
-    #./autogen.sh && \
-    #./configure \
-    #    --disable-static \
-    #    && \
-    #make && \
-    #make install && \
-    #\
-    #clone_git_repo "${SSOCR_REPO_URL}" "${SSOCR_VERSION}" && \
-    #make -j"$(nproc)" && \
-    #cp -R ssocr /usr/bin/ssocr && \
-    #\
-    #clone_git_repo "${TELLDUS_REPO_URL}" "${TELLDUS_VERSION}" && \
-    #git apply ../patches/telldus-alpine.patch && \
-    #git apply ../patches/telldus-gcc11.patch && \
-    #cd telldus-core && \
-    #cmake . \
-    #        -DBUILD_LIBTELLDUS-CORE=ON \
-    #        -DBUILD_TDADMIN=OFF \
-    #        -DBUILD_TDTOOL=OFF \
-    #        -DFORCE_COMPILE_FROM_TRUNK=ON \
-    #        -DGENERATE_MAN=OFF \
-    #        && \
-    #make -j"$(nproc)" && \
-    #make install && \
-    \
-    #clone_git_repo "${TEMPIO_REPO_URL}" "${TEMPIO_VERSION}" && \
-    #go build -ldflags '-s' -o /usr/bin/tempio && \
-    \
     package remove \
                     .homeassistant-build-deps \
                     .homeassistant-cli-build-deps \
                     .jemalloc-build-deps \
-                    #.picotts-build-deps \
-                    #.ssocr-build-deps \
-                    #.telldus-build-deps \
-                    #.tempio-build-deps \
                     && \
     package cleanup && \
     rm -rf \
