@@ -191,8 +191,6 @@ RUN source /assets/functions/00-container && \
                 --no-warn-script-location \
                 -r requirements.txt \
                 -r requirements_custom.txt \
-                git+https://github.com/rhasspy/webrtc-noise-gain \
-                ## HACK Until a better version >1.2.3 of webrtc-noise-gain \
                 && \
     \
     sudo -u "${HOMEASSISTANT_USER}" \

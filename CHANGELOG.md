@@ -1,3 +1,9 @@
+## 1.0.4 2024-07-10 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Remove manually installing webrtc-noise-gain
+
+
 ## 1.0.3 2024-07-10 <dave at tiredofit dot ca>
 
    ### Added
