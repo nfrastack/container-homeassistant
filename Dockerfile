@@ -11,11 +11,12 @@ ARG JEMALLOC_VERSION
 ARG HOMEASSISTANT_COMPONENTS
 ARG HOMEASSISTANT_MODULES
 
-ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.7.2"} \
+ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.7.3"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.34.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \
                                                             esphome, \
+                                                            garminconnect, \
                                                             github, \
                                                             jellyfin, \
                                                             meater, \
@@ -38,7 +39,6 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.7.2"} \
                                                             conversation, \
                                                             dhcp, \
                                                             discovery, \
-                                                            environment_canada, \
                                                             file_upload, \
                                                             ffmpeg, \
                                                             frontend, \
