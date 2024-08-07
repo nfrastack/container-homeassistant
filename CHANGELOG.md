@@ -1,3 +1,9 @@
+## 1.0.7 2024-08-07 <dave at tiredofit dot ca>
+
+   ### Added
+      - Home Assistant 2024.8.0
+
+
 ## 1.0.6 2024-07-30 <dave at tiredofit dot ca>
 
    ### Added
