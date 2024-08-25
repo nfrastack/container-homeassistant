@@ -2,16 +2,23 @@ ARG DISTRO=alpine
 ARG DISTRO_VARIANT=3.20
 
 FROM docker.io/tiredofit/nginx:${DISTRO}-${DISTRO_VARIANT}
-LABEL maintainer="Dave Conroy (github.com/tiredofit)"
 
-ARG HOMEASSISTANT_COMPONENTS
+LABEL org.opencontainers.image.title         "Home Assistant"
+LABEL org.opencontainers.image.description   "Dockerized Home Automation Platform"
+LABEL org.opencontainers.image.url           "https://hub.docker.com/r/tiredofit/homeassistant"
+LABEL org.opencontainers.image.documentation "https://github.com/tiredofit/docker-homeassistant/blob/main/README.md"
+LABEL org.opencontainers.image.source        "https://github.com/tiredofit/docker-homeassistant.git"
+LABEL org.opencontainers.image.authors       "Dave Conroy <dave@tiredofit.ca>"
+LABEL org.opencontainers.image.vendor        "Tired of I.T! <https://www.tiredofit.ca>"
+LABEL org.opencontainers.image.licenses      "MIT"
+
 ARG HOMEASSISTANT_CLI_VERSION
-ARG HOMEASSISTANT_VERSION
-ARG JEMALLOC_VERSION
 ARG HOMEASSISTANT_COMPONENTS
 ARG HOMEASSISTANT_MODULES
+ARG HOMEASSISTANT_VERSION
+ARG JEMALLOC_VERSION
 
-ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.8.2"} \
+ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.8.3"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.35.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \

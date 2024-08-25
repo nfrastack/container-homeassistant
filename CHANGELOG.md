@@ -1,3 +1,9 @@
+## 1.0.10 2024-08-25 <dave at tiredofit dot ca>
+
+   ### Added
+      - HomeAssistant 2024.8.3
+
+
 ## 1.0.9 2024-08-16 <dave at tiredofit dot ca>
 
    ### Added
