@@ -1,3 +1,9 @@
+## 1.0.16 2024-10-04 <dave at tiredofit dot ca>
+
+   ### Added
+      - Add 'uv' package
+
+
 ## 1.0.15 2024-10-04 <dave at tiredofit dot ca>
 
    ### Added

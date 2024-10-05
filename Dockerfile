@@ -198,6 +198,7 @@ RUN source /assets/functions/00-container && \
                 --no-warn-script-location \
                 -r requirements.txt \
                 -r requirements_custom.txt \
+                uv \
                 && \
     \
     sudo -u "${HOMEASSISTANT_USER}" \
