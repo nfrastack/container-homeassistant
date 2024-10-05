@@ -36,7 +36,7 @@ esac
 if var_true "${SKIP_PIP,,}" ; then skip_pip="--skip-pip"; fi
 
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
-
+source /opt/homeassistant/bin/activate && \
 exec sudo -u "${HOMEASSISTANT_USER}" \
             /opt/homeassistant/bin/python3 \
                 -m homeassistant \

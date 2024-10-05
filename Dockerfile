@@ -90,7 +90,6 @@ RUN source /assets/functions/00-container && \
                         iputils \
                         jq \
                         libcap \
-                        #libgpiod \
                         libpulse \
                         libstdc++ \
                         libxslt \
@@ -98,7 +97,6 @@ RUN source /assets/functions/00-container && \
                         mariadb-connector-c \
                         net-tools \
                         nmap \
-                        #openssh-client \
                         openssl \
                         pianobar \
                         py3-libcec \
@@ -156,6 +154,7 @@ RUN source /assets/functions/00-container && \
                     && \
     \
     echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
+    pip install --break-system-packages uv && \
     \
     clone_git_repo "${JEMALLOC_REPO_URL}" "${JEMALLOC_VERSION}" && \
     ./autogen.sh \
@@ -167,7 +166,7 @@ RUN source /assets/functions/00-container && \
     cd /usr/src/ && \
     clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" homeassistant && \
     \
-    python3 -m venv /opt/homeassistant && \
+    uv venv /opt/homeassistant && \
     chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
     cd /usr/src/homeassistant && \
     export HOMEASSISTANT_COMPONENTS_CORE=$(echo components.${HOMEASSISTANT_COMPONENTS_CORE} | sed -e 's|, |\| components.|g' -e 's| ||g') && \
@@ -190,15 +189,14 @@ RUN source /assets/functions/00-container && \
     mkdir -p /assets/.changelogs && \
     cp requirements_custom.txt /assets/.changelogs && \
     export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
+    source /opt/homeassistant/bin/activate && \
     LD_PRELOAD="/usr/local/lib/libjemalloc.so.2" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
         sudo -u "${HOMEASSISTANT_USER}" \
-            /opt/homeassistant/bin/pip install \
+            uv pip install \
                 --compile \
-                --no-warn-script-location \
                 -r requirements.txt \
                 -r requirements_custom.txt \
-                uv \
                 && \
     \
     sudo -u "${HOMEASSISTANT_USER}" \

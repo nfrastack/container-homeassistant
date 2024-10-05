@@ -1,3 +1,9 @@
+## 1.1.0 2024-10-05 <dave at tiredofit dot ca>
+
+   ### Added
+      - Switch to using uv for Python Virtual Environments
+
+
 ## 1.0.16 2024-10-04 <dave at tiredofit dot ca>
 
    ### Added
