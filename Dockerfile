@@ -1,5 +1,5 @@
 ARG DISTRO=alpine
-ARG DISTRO_VARIANT=3.20
+ARG DISTRO_VARIANT=edge:6.5.5
 
 FROM docker.io/tiredofit/nginx:${DISTRO}-${DISTRO_VARIANT}
 
@@ -68,9 +68,11 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.0"} \
                                                                 "} \
     HOMEASSISTANT_USER=${HOMEASSISTANT_USER:-"homeassistant"} \
     HOMEASSISTANT_GROUP=${HOMEASSISTANT_GROUP:-"homeassistant"} \
+    GO2RTC_VERSION=${GO2RTC_VERSION:-"v1.9.6"} \
     JEMALLOC_VERSION=${JEMALLOC_VERSION:-"5.3.0"} \
     HOMEASSISTANT_REPO_URL=${HOMEASSISTANT_REPO_URL:-"https://github.com/home-assistant/core"} \
     HOMEASSISTANT_CLI_REPO_URL=${HOMEASSISTANT_CLI_REPO_URL:-"https://github.com/home-assistant/cli"} \
+    GO2RTC_REPO_URL=${GO2RTC_REPO_URL:-"https://github.com/AlexxIT/go2rtc"} \
     JEMALLOC_REPO_URL=${JEMALLOC_REPO_URL:-"https://github.com/jemalloc/jemalloc"} \
     NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
     NGINX_SITE_ENABLED=homeassistant \
@@ -101,6 +103,10 @@ RUN source /assets/functions/00-container && \
                         py3-libcec \
                         socat \
                         tiff \
+                    && \
+    \
+    package install .go2rtc-build-deps \
+                        go \
                     && \
     \
     package install .jemalloc-build-deps \
@@ -213,7 +219,11 @@ RUN source /assets/functions/00-container && \
             -o /usr/bin/ha-cli \
             && \
     \
+    clone_git_repo "${GO2RTC_REPO_URL}" "${GO2RTC_VERSION}" /usr/src/go2rtc && \
+    go build -v -ldflags '-s -w' -o /usr/local/bin/go2rtc && \
+    \
     package remove \
+                    .go2rtc-build-deps \
                     .homeassistant-build-deps \
                     .homeassistant-cli-build-deps \
                     .jemalloc-build-deps \

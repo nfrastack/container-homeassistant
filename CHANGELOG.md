@@ -1,3 +1,9 @@
+## 1.1.6 2024-11-07 <dave at tiredofit dot ca>
+
+   ### Added
+      - Start building and including go2rtc based on WebRTC inclusion of 2024.11.0
+
+
 ## 1.1.5 2024-11-07 <dave at tiredofit dot ca>
 
    ### Added
