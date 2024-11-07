@@ -1,3 +1,9 @@
+## 1.1.7 2024-11-07 <dave at tiredofit dot ca>
+
+   ### Changed
+      - Respin of 1.1.6
+
+
 ## 1.1.6 2024-11-07 <dave at tiredofit dot ca>
 
    ### Added
