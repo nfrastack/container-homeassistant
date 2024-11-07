@@ -1,3 +1,9 @@
+## 1.1.5 2024-11-07 <dave at tiredofit dot ca>
+
+   ### Added
+      - Bump Home Assistant CLI to 4.36.0
+
+
 ## 1.1.4 2024-11-06 <dave at tiredofit dot ca>
 
    ### Added

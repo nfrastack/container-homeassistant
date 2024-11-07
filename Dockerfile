@@ -19,7 +19,7 @@ ARG HOMEASSISTANT_VERSION
 ARG JEMALLOC_VERSION
 
 ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.0"} \
-    HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.35.0"} \
+    HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.36.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \
                                                             esphome, \
@@ -71,7 +71,6 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.0"} \
     JEMALLOC_VERSION=${JEMALLOC_VERSION:-"5.3.0"} \
     HOMEASSISTANT_REPO_URL=${HOMEASSISTANT_REPO_URL:-"https://github.com/home-assistant/core"} \
     HOMEASSISTANT_CLI_REPO_URL=${HOMEASSISTANT_CLI_REPO_URL:-"https://github.com/home-assistant/cli"} \
-    BASHIO_REPO_URL=${BASHIO_REPO_URL:-"https://github.com/hassio-addons/bashio"} \
     JEMALLOC_REPO_URL=${JEMALLOC_REPO_URL:-"https://github.com/jemalloc/jemalloc"} \
     NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
     NGINX_SITE_ENABLED=homeassistant \
