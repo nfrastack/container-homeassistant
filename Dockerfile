@@ -1,5 +1,5 @@
 ARG DISTRO=alpine
-ARG DISTRO_VARIANT=edge-6.5.5
+ARG DISTRO_VARIANT=3.20-6.5.5
 
 FROM docker.io/tiredofit/nginx:${DISTRO}-${DISTRO_VARIANT}
 
@@ -18,7 +18,7 @@ ARG HOMEASSISTANT_MODULES
 ARG HOMEASSISTANT_VERSION
 ARG JEMALLOC_VERSION
 
-ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.0"} \
+ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.1"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.36.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \
@@ -69,6 +69,7 @@ ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.11.0"} \
     HOMEASSISTANT_USER=${HOMEASSISTANT_USER:-"homeassistant"} \
     HOMEASSISTANT_GROUP=${HOMEASSISTANT_GROUP:-"homeassistant"} \
     GO2RTC_VERSION=${GO2RTC_VERSION:-"v1.9.6"} \
+    GOLANG_VERSION=${GOLAND_VERSION:-"1.23.3"} \
     JEMALLOC_VERSION=${JEMALLOC_VERSION:-"5.3.0"} \
     HOMEASSISTANT_REPO_URL=${HOMEASSISTANT_REPO_URL:-"https://github.com/home-assistant/core"} \
     HOMEASSISTANT_CLI_REPO_URL=${HOMEASSISTANT_CLI_REPO_URL:-"https://github.com/home-assistant/cli"} \
@@ -212,15 +213,26 @@ RUN source /assets/functions/00-container && \
                 -e '/"shopping_list",/d' \
                 /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     \
+    mkdir -p /usr/src/golang ; \
+    curl -sSL https://dl.google.com/go/go${GOLANG_VERSION}.src.tar.gz | tar xvfz - --strip 1 -C /usr/src/golang ; \
+    cd /usr/src/golang/src/ ; \
+    ./make.bash 1>/dev/null ; \
+    export GOROOT=/usr/src/golang/ ; \
+    export PATH="/usr/src/golang/bin:$PATH" ; \
+    \
     cd /usr/src && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
-    go build \
+    /usr/src/golang/bin/go build \
             -ldflags '-s' \
-            -o /usr/bin/ha-cli \
+            -o /usr/local/bin/ha-cli \
             && \
     \
     clone_git_repo "${GO2RTC_REPO_URL}" "${GO2RTC_VERSION}" /usr/src/go2rtc && \
-    go build -v -ldflags '-s -w' -o /usr/local/bin/go2rtc && \
+    /usr/src/golang/bin/go build \
+            -v \
+            -ldflags '-s -w' \
+            -o /usr/local/bin/go2rtc \
+            && \
     \
     package remove \
                     .go2rtc-build-deps \
