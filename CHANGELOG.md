@@ -1,3 +1,10 @@
+## 1.1.10 2024-11-22 <dave at tiredofit dot ca>
+
+   ### Added
+      - Home Assistant 2024.11.3
+      - Go2rtc 1.9.7
+
+
 ## 1.1.9 2024-11-15 <dave at tiredofit dot ca>
 
    ### Added
