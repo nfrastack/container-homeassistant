@@ -18,7 +18,7 @@ ARG HOMEASSISTANT_MODULES
 ARG HOMEASSISTANT_VERSION
 ARG JEMALLOC_VERSION
 
-ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.12.0"} \
+ENV HOMEASSISTANT_VERSION=${HOMEASSISTANT_VERSION:-"2024.12.1"} \
     HOMEASSISTANT_CLI_VERSION=${HOMEASSISTANT_CLI_VERSION:-"4.36.0"} \
     HOMEASSISTANT_COMPONENTS=${HOMEASSISTANT_COMPONENTS:-" \
                                                             environment_canada, \
@@ -213,12 +213,12 @@ RUN source /assets/functions/00-container && \
                 -e '/"shopping_list",/d' \
                 /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     \
-    mkdir -p /usr/src/golang ; \
-    curl -sSL https://dl.google.com/go/go${GOLANG_VERSION}.src.tar.gz | tar xvfz - --strip 1 -C /usr/src/golang ; \
-    cd /usr/src/golang/src/ ; \
-    ./make.bash 1>/dev/null ; \
-    export GOROOT=/usr/src/golang/ ; \
-    export PATH="/usr/src/golang/bin:$PATH" ; \
+    mkdir -p /usr/src/golang && \
+    curl -sSL https://dl.google.com/go/go${GOLANG_VERSION}.src.tar.gz | tar xvfz - --strip 1 -C /usr/src/golang && \
+    cd /usr/src/golang/src/ && \
+    ./make.bash 1>/dev/null && \
+    export GOROOT=/usr/src/golang/ && \
+    export PATH="/usr/src/golang/bin:$PATH" && \
     \
     cd /usr/src && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
