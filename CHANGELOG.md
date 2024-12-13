@@ -1,3 +1,9 @@
+## 1.1.14 2024-12-13 <dave at tiredofit dot ca>
+
+   ### Added
+      - Home Assistnat 2024.12.3
+
+
 ## 1.1.13 2024-12-11 <dave at tiredofit dot ca>
 
    ### Added
