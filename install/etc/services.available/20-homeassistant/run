@@ -2,7 +2,7 @@
 
 source /assets/functions/00-container
 prepare_service defaults 20-homeassistant
-PROCESS_NAME="homeassistant"
+SERVICE_NAME="homeassistant"
 
 check_container_initialized
 check_service_initialized init
