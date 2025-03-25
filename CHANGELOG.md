@@ -1,3 +1,16 @@
+## 1.2.0 2025-03-25 <dave at tiredofit dot ca>
+
+   ### Added
+      - Compile Python 3.13.2 from Source
+      - Alpine 3.20 base
+      - Home Assistant 2025.3.4
+      - Home Assistant CLI 4.37
+      - Go2RTC 1.9.9
+
+   ### Changed
+      - Fix issue with logging upon startup if not volume mapped
+
+
 ## 1.1.21 2025-01-24 <dave at tiredofit dot ca>
 
    ### Added

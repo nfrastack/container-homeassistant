@@ -111,6 +111,7 @@ Be sure to view the following repositories to understand all the customizable op
 | --------------------- | ----------------------------------------- | ------------------- | ----- |
 | `CONFIG_PATH`         | Configuration directory                   | `/config/`          |       |
 | `ENABLE_NGINX`        | Enable Nginx Frontend webserver           | `TRUE`              |       |
+| `ENABLE_BUILD_TOOLS`  | Install development tools if having problems installing modules | `FALSE` | |
 | `ENABLE_JEMALLOC`     | Enable high performance  memory allocator | `TRUE`              |       |
 | `HOMEASSISTANT_MODE`  | Home Assistant Mode                       | `NORMAL`            |       |
 | `HOMEASSISTANT_USER`  | Home Assistant User                       | `homeassistant`     |       |

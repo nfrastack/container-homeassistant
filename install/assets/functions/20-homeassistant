@@ -19,11 +19,36 @@ bootstrap_filesystem() {
     if [ "$(stat -c %U "${DATA_PATH}")" != "homeassistant" ] ; then chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" "${DATA_PATH}" ; fi
     if [ "$(stat -c %a "${DATA_PATH}")" != "700" ] ; then chmod -R 700 "${DATA_PATH}" ; fi
 
+    if [ ! -d "${LOG_PATH}" ] ; then
+        mkdir -p "${LOG_PATH}"
+    fi
     if [ "$(stat -c %U "${LOG_PATH}")" != "homeassistant" ] ; then chown homeassistant:homeassistant "${LOG_PATH}" ; fi
     create_logrotate homeassistant "${LOG_PATH}"/"${LOG_FILE}" homeassistant homeassistant homeassistant
 }
 
 configure_homeassistant() {
+    if var_true "${ENABLE_BUILD_TOOLS}"; then
+        package update
+        package insall -t .homeassistant-build-deps \
+                            build-base \
+                            cython \
+                            ffmpeg-dev \
+                            gcc \
+                            g++ \
+                            linux-headers \
+                            isa-l-dev \
+                            jpeg-dev \
+                            libffi-dev \
+                            libjpeg-turbo-dev \
+                            make \
+                            mariadb-connector-c-dev \
+                            musl-dev \
+                            openblas-dev \
+                            postgresql-dev \
+                            zlib-dev \
+                            zlib-ng-dev
+    fi
+
     if [ "${SETUP_MODE,,}" = "auto" ] ; then
         if [ ! -f "${CONFIG_PATH}"/configuration.yaml ]; then
             print_info "Generating Initial Home Assistant Configuration"
