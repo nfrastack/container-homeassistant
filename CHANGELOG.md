@@ -1,3 +1,10 @@
+## 1.2.18 2025-08-06 <dave at tiredofit dot ca>
+
+   ### Added
+      - Home Assistant 2025.8.0
+      - Home Assistant CLI 4.39.0
+
+
 ## 1.2.17 2025-07-28 <dave at tiredofit dot ca>
 
    ### Added
