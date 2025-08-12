@@ -1,3 +1,10 @@
+## 1.2.19 2025-08-11 <dave at tiredofit dot ca>
+
+   ### Added
+      - Home Assistant 2025.8.1
+      - Python 3.13.6
+
+
 ## 1.2.18 2025-08-06 <dave at tiredofit dot ca>
 
    ### Added
