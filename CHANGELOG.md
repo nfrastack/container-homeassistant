@@ -1,3 +1,9 @@
+## 1.2.21 2025-08-16 <dave at tiredofit dot ca>
+
+   ### Added
+      - Add aarch64 build
+
+
 ## 1.2.20 2025-08-15 <dave at tiredofit dot ca>
 
    ### Added
