@@ -1,7 +1,10 @@
 #!/command/with-contenv bash
+# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+#
+# SPDX-License-Identifier: MIT
 
-source /assets/functions/00-container
-prepare_service defaults 20-homeassistant
+source /container/base/functions/container/init
+prepare_service 20-homeassistant
 SERVICE_NAME="homeassistant"
 
 check_container_initialized
@@ -10,8 +13,8 @@ check_service_initialized init
 liftoff
 
 if var_true "${ENABLE_JEMALLOC}" ; then
-  export LD_PRELOAD="/usr/local/lib/libjemalloc.so.2"
-  export MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000"
+    export LD_PRELOAD="/usr/local/lib/libjemalloc.so.2"
+    export MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000"
 fi
 
 if [ "${LOG_LEVEL,,}" = "verbose" ]; then

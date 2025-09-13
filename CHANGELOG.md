@@ -1,3 +1,11 @@
+## 1.3.0pre 2025-09-12 <code at nfrastack dot com>
+
+   ### Added
+      - New base image nfrastack/container-nginx
+      - Home Assistant 2025.9.2
+      - Alpine 3.19 (!) temporarily
+      - Python 3.13.7
+
 ## 1.2.99 2025-09-12 <dave at tiredofit dot ca>
 
 Add EOL Notice to deprecated image

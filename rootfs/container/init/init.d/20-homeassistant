@@ -1,0 +1,13 @@
+#!/command/with-contenv bash
+# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+#
+# SPDX-License-Identifier: MIT
+
+source /container/base/functions/container/init
+prepare_service 20-homeassistant
+SERVICE_NAME=homeassistant
+
+homeassistant_bootstrap_filesystem
+homeassistant_configure_webserver
+
+liftoff
