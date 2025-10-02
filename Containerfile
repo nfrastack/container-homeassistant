@@ -2,9 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
-ARG BASE_IMAGE
-ARG DISTRO
-ARG DISTRO_VARIANT
+ARG \
+    BASE_IMAGE \
+    DISTRO \
+    DISTRO_VARIANT
 
 FROM ${BASE_IMAGE}:${DISTRO}_${DISTRO_VARIANT}
 
@@ -19,9 +20,9 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2025.9.4" \
+    HOMEASSISTANT_VERSION="2025.10.0" \
     HOMEASSISTANT_CLI_VERSION="4.41.0" \
-    GO2RTC_VERSION="v1.9.9" \
+    GO2RTC_VERSION="v1.9.10" \
     JEMALLOC_VERSION="5.3.0" \
     PYTHON_VERSION="3.13.7" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
