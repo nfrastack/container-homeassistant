@@ -3,11 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 ARG \
-    BASE_IMAGE \
-    DISTRO \
-    DISTRO_VARIANT
+    BASE_IMAGE
 
-FROM ${BASE_IMAGE}:${DISTRO}_${DISTRO_VARIANT}
+FROM ${BASE_IMAGE}
 
 LABEL \
         org.opencontainers.image.title="Home Assistant" \
@@ -20,7 +18,7 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2025.10.1" \
+    HOMEASSISTANT_VERSION="2025.10.2" \
     HOMEASSISTANT_CLI_VERSION="4.41.0" \
     GO2RTC_VERSION="v1.9.10" \
     JEMALLOC_VERSION="5.3.0" \
