@@ -146,7 +146,6 @@ RUN echo "" && \
                                 && \
     \
     HOMEASSISTANTCLI_BUILD_DEPS_ALPINE=" \
-                                            go \
                                         " \
                                         && \
     \
@@ -360,12 +359,7 @@ RUN echo "" && \
     \
     container_build_log add "Home Assistant" "${HOMEASSISTANT_VERSION}" "${HOMEASSISTANT_REPO_URL}" && \
     \
-    mkdir -p /usr/local/go && \
-    GOLANG_VERSION=${GOLANG_VERSION:-"$(curl -sSL https://golang.org/VERSION?m=text | head -n1 | sed "s|^go||g")"} && \
-    curl -sSLk  https://dl.google.com/go/go${GOLANG_VERSION}.linux-$(container_info arch alt).tar.gz | tar xfz - --strip 1 -C /usr/local/go && \
-    ln -sf /usr/local/go/bin/go /usr/local/bin/ && \
-    ln -sf /usr/local/go/bin/godoc /usr/local/bin/ && \
-    ln -sf /usr/local/go/bin/gfmt /usr/local/bin/ &&  \
+    package build go && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
     go build \
             -ldflags '-s' \
@@ -390,10 +384,7 @@ RUN echo "" && \
                     && \
     rm -rf \
             /root/go \
-            /tmp/* \
-            /usr/local/bin/gfmt* \
-            /usr/local/bin/go* \
-            /usr/local/go && \
+            && \
     package cleanup
 
 COPY rootfs /
