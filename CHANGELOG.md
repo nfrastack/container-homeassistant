@@ -2,9 +2,9 @@
 
    ### Added
       - New base image nfrastack/container-nginx
-      - Home Assistant 2025.10.2
+      - Home Assistant 2025.10.3
       - Alpine 3.19 (!) temporarily
-      - Python 3.13.7
+      - Python 3.13.9
 
 ## 1.2.99 2025-09-12 <dave at tiredofit dot ca>
 
