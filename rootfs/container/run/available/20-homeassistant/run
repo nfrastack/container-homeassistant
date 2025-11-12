@@ -45,5 +45,5 @@ exec sudo -u "${HOMEASSISTANT_USER}" \
                 -m homeassistant \
                 --config "${CONFIG_PATH}" \
                 --log-rotate-days 0 ${log_level} \
-                --log-file "${LOG_PATH}"/"${LOG_FILE}" \
+                --log-file "${LOG_PATH%/}"/"${LOG_FILE}" \
                 ${skip_pip} ${homeassistant_mode} ${HOMEASSISTANT_ARGS}

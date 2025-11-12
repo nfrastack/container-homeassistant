@@ -10,7 +10,7 @@ homeassistant_bootstrap_filesystem() {
                     ${LOG_PATH}" \
                     ${HOMEASSISTANT_USER}:${HOMEASSISTAANT_GROUP} 755
 
-    create_logrotate homeassistant "${LOG_PATH}"/"${LOG_FILE}" homeassistant ${HOMEASSISTANT_USER} ${HOMEASSISTANT_GROUP}
+    create_logrotate homeassistant "${LOG_PATH%/}"/"${LOG_FILE}" homeassistant ${HOMEASSISTANT_USER} ${HOMEASSISTANT_GROUP}
 }
 
 homeassistant_configure_webserver() {
@@ -28,9 +28,9 @@ homeassistant_generate_configuration() {
     fi
 
     if [ "${SETUP_MODE,,}" = "auto" ] ; then
-        if [ ! -f "${CONFIG_PATH}"/configuration.yaml ]; then
+        if [ ! -f "${CONFIG_PATH%/}"/configuration.yaml ]; then
             print_info "Generating Initial Home Assistant Configuration"
-            cat <<EOF | silent sudo -u "${HOMEASSISTANT_USER}" tee "${CONFIG_PATH}"/configuration.yaml
+            cat <<EOF | silent sudo -u "${HOMEASSISTANT_USER}" tee "${CONFIG_PATH%/}"/configuration.yaml
 ## Home Assistant Configuration
 ## Generated for version ${HOMEASSISTANT_VERSION} from ${IMAGE_NAME} on $(TZ=${TIMEZONE} date +'%Y-%m-%d %H:%M:%S %Z')
 
