@@ -2,8 +2,8 @@
 
    ### Added
       - New base image nfrastack/container-nginx
-      - Home Assistant 2025.11.2
-      - Go2RTC 1.9.11
+      - Home Assistant 2025.11.3
+      - Go2RTC 1.9.12
       - Alpine 3.19 (!) temporarily
       - Python 3.13.9
 
