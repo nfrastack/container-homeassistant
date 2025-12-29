@@ -18,11 +18,11 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2025.12.4" \
-    HOMEASSISTANT_CLI_VERSION="4.41.0" \
+    HOMEASSISTANT_VERSION="2025.12.5" \
+    HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.13" \
     JEMALLOC_VERSION="5.3.0" \
-    PYTHON_VERSION="3.13.9" \
+    PYTHON_VERSION="3.13.11" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
     HOMEASSISTANT_CLI_REPO_URL="https://github.com/home-assistant/cli" \
     HOMEASSISTANT_REPO_URL="https://github.com/home-assistant/core" \
