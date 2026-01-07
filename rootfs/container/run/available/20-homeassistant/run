@@ -40,10 +40,10 @@ if var_true "${SKIP_PIP,,}" ; then skip_pip="--skip-pip"; fi
 
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 source /opt/homeassistant/bin/activate && \
-exec sudo -u "${HOMEASSISTANT_USER}" \
-            /opt/homeassistant/bin/python3 \
-                -m homeassistant \
-                --config "${CONFIG_PATH}" \
-                --log-rotate-days 0 ${log_level} \
-                --log-file "${LOG_PATH%/}"/"${LOG_FILE}" \
-                ${skip_pip} ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
+exec s6-setuidgid "${HOMEASSISTANT_USER}" \
+                    /opt/homeassistant/bin/python3 \
+                        -m homeassistant \
+                        --config "${CONFIG_PATH}" \
+                        --log-rotate-days 0 ${log_level} \
+                        --log-file "${LOG_PATH%/}"/"${LOG_FILE}" \
+                        ${skip_pip} ${homeassistant_mode} ${HOMEASSISTANT_ARGS}
