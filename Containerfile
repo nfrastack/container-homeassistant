@@ -18,26 +18,26 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2025.12.5" \
+    HOMEASSISTANT_VERSION="2026.1.0" \
     HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.13" \
+    MIMALLOC_VERSION="v3.0.11" \
     JEMALLOC_VERSION="5.3.0" \
     PYTHON_VERSION="3.13.11" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
     HOMEASSISTANT_CLI_REPO_URL="https://github.com/home-assistant/cli" \
     HOMEASSISTANT_REPO_URL="https://github.com/home-assistant/core" \
     JEMALLOC_REPO_URL="https://github.com/jemalloc/jemalloc" \
+    MIMALLOC_REPO_URL="https://github.com/microsoft/mimalloc" \
     HOMEASSISTANT_COMPONENTS=" \
                                 environment_canada, \
                                 esphome, \
-                                garminconnect, \
                                 github, \
                                 jellyfin, \
                                 meater, \
                                 mqtt, \
                                 roku, \
                                 tuya, \
-                                #xbox, \
                                 zha \
                                 " \
     HOMEASSISTANT_COMPONENTS_CORE=" \
@@ -108,7 +108,6 @@ RUN echo "" && \
                                     nmap \
                                     openssl \
                                     pianobar \
-                                    #py3-libcec \
                                     socat \
                                     tiff \
                                 " \
@@ -146,19 +145,17 @@ RUN echo "" && \
                                 && \
     \
     HOMEASSISTANTCLI_BUILD_DEPS_ALPINE=" \
-                                        " \
-                                        && \
+                                       " \
+                                       && \
     \
-    JEMALLOC_BUILD_DEPS_ALPINE=" \
-                                    autoconf \
+    MIMALLOC_BUILD_DEPS_ALPINE=" \
+                                    cmake \
                                     make \
                                 " \
                                 && \
     PYTHON_BUILD_DEPS_ALPINE="  \
                                 bluez-dev \
                                 bzip2-dev \
-                                #dpkg-dev \
-                                #dpkg \
                                 findutils \
                                 gcc \
                                 gdbm-dev \
@@ -195,7 +192,7 @@ RUN echo "" && \
                         HOMEASSISTANT_BUILD_DEPS \
                         HOMEASSISTANT_RUN_DEPS \
                         HOMEASSISTANTCLI_BUILD_DEPS \
-                        JEMALLOC_BUILD_DEPS \
+                        MIMALLOC_BUILD_DEPS \
                         PYTHON_BUILD_DEPS \
                         && \
     mkdir -p /usr/src/python && \
@@ -205,13 +202,13 @@ RUN echo "" && \
         alpine ) clib=musl ;; \
         debian|ubuntu ) clib=gnu ;; \
     esac ; \
-	./configure \
-		--build="$(uname -m)-linux-${clib}" \
-		--enable-loadable-sqlite-extensions \
-		--enable-option-checking=fatal \
-		--enable-shared \
-		--with-lto \
-		--with-ensurepip \
+    ./configure \
+        --build="$(uname -m)-linux-${clib}" \
+        --enable-loadable-sqlite-extensions \
+        --enable-option-checking=fatal \
+        --enable-shared \
+        --with-lto \
+        --with-ensurepip \
         && \
     EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000" && \
     LDFLAGS="${LDFLAGS:--Wl},--strip-all" && \
@@ -219,54 +216,53 @@ RUN echo "" && \
         x86_64 | aarch64) EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" ;; \
         * ) EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer" ;; \
     esac ; \
-	make \
+    make \
              -j $(nproc) \
-    		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-	    	"LDFLAGS=${LDFLAGS:-}" \
-	        && \
+            "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+            "LDFLAGS=${LDFLAGS:-}" \
+            && \
     rm python && \
-	make \
+    make \
             -j $(nproc) \
-    		"EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-    		"LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-    		python \
-    	    && \
-	make install && \
-	find /usr/local -depth \
+            "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
+            "LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
+            python \
+            && \
+    make install && \
+    find /usr/local -depth \
                             \( \
-	                    		\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-	                    		-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
-	                    	\) -exec rm -rf '{}' + \
-	                        && \
-	\
-	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
-        		| tr ',' '\n' \
-        		| sort -u \
-        		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-        		| xargs -rt apk add --no-network --virtual .python-rundeps \
-        	    && \
-	export PYTHONDONTWRITEBYTECODE=1 && \
+                                \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
+                                -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
+                            \) -exec rm -rf '{}' + \
+                            && \
+    \
+    find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
+                | tr ',' '\n' \
+                | sort -u \
+                | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+                | xargs -rt apk add --no-network --virtual .python-rundeps \
+                && \
+    export PYTHONDONTWRITEBYTECODE=1 && \
     \
     for src in idle3 pip3 pydoc3 python3 python3-config; do \
-		dst="$(echo "$src" | tr -d 3)"; \
-		[ -s "/usr/local/bin/$src" ]; \
-		[ ! -e "/usr/local/bin/$dst" ]; \
-		ln -svT "$src" "/usr/local/bin/$dst"; \
-	done && \
+        dst="$(echo "$src" | tr -d 3)"; \
+        [ -s "/usr/local/bin/$src" ]; \
+        [ ! -e "/usr/local/bin/$dst" ]; \
+        ln -svT "$src" "/usr/local/bin/$dst"; \
+    done && \
     \
     echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
     pip install --break-system-packages uv && \
     \
     container_build_log add "Python" "${PYTHON_VERSION}" "python.org" && \
     \
-    clone_git_repo "${JEMALLOC_REPO_URL}" "${JEMALLOC_VERSION}" && \
-    ./autogen.sh \
-                --with-lg-page=16 \
-                && \
-    make -j "$(nproc)" && \
-    make install_lib_shared install_bin && \
-    \
-    container_build_log add "JemAlloc" "${JEMALLOC_VERSION}" "${JEMALLOC_REPO_URL}" && \
+    clone_git_repo "${MIMALLOC_REPO_URL}" "${MIMALLOC_VERSION}" && \
+    mkdir -p out/release && \
+    cd out/release && \
+    cmake ../.. && \
+    make && \
+    make install && \
+    container_build_log add "MimAlloc" "${MIMALLOC_VERSION}" "${MIMALLOC_REPO_URL}" && \
     \
     clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" /usr/src/homeassistant && \
     uv venv /opt/homeassistant && \
@@ -336,7 +332,7 @@ RUN echo "" && \
     echo "homeassistant==${HOMEASSISTANT_VERSION}" >> requirements_custom.txt && \
     cp requirements_custom.txt /container/build/"${IMAGE_NAME/\//_}"/ && \
     export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so.2" \
+    LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
         CFLAGS="-Wno-int-conversion" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
         sudo -u "${HOMEASSISTANT_USER}" \
@@ -380,6 +376,7 @@ RUN echo "" && \
                     HOMEASSISTANT_BUILD_DEPS \
                     HOMEASSISTANTCLI_BUILD_DEPS \
                     JEMALLOC_BUILD_DEPS \
+                    MIMALLOC_BUILD_DEPS \
                     PYTHON_BUILD_DEPS \
                     && \
     rm -rf \
