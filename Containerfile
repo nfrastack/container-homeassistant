@@ -18,16 +18,14 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.1.0" \
+    HOMEASSISTANT_VERSION="2026.1.1" \
     HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.13" \
     MIMALLOC_VERSION="v3.0.11" \
-    JEMALLOC_VERSION="5.3.0" \
     PYTHON_VERSION="3.13.11" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
     HOMEASSISTANT_CLI_REPO_URL="https://github.com/home-assistant/cli" \
     HOMEASSISTANT_REPO_URL="https://github.com/home-assistant/core" \
-    JEMALLOC_REPO_URL="https://github.com/jemalloc/jemalloc" \
     MIMALLOC_REPO_URL="https://github.com/microsoft/mimalloc" \
     HOMEASSISTANT_COMPONENTS=" \
                                 environment_canada, \
@@ -292,7 +290,7 @@ RUN echo "" && \
         requirements_custom.txt && \
     cp requirements_custom.txt /container/build/"${IMAGE_NAME/\//_}"/ && \
     export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
-    LD_PRELOAD="/usr/local/lib/libjemalloc.so.2" \
+    LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
             uv pip install \
                 --compile \
@@ -375,7 +373,6 @@ RUN echo "" && \
                     GO2RTC_BUILD_DEPS \
                     HOMEASSISTANT_BUILD_DEPS \
                     HOMEASSISTANTCLI_BUILD_DEPS \
-                    JEMALLOC_BUILD_DEPS \
                     MIMALLOC_BUILD_DEPS \
                     PYTHON_BUILD_DEPS \
                     && \

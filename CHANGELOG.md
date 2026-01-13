@@ -7,6 +7,7 @@
       - Go2RTC 1.9.13
       - Alpine 3.19 (!) temporarily
       - Python 3.13.11
+      - Switch to mimalloc from Jemalloc
 
 ## 1.2.99 2025-09-12 <dave at tiredofit dot ca>
 

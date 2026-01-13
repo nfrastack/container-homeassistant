@@ -108,7 +108,7 @@ Below is the complete list of available options that can be used to customize yo
 | `CONFIG_PATH`         | Configuration directory                                         | `/config/`          |       |
 | `ENABLE_NGINX`        | Enable Nginx Frontend webserver                                 | `TRUE`              |       |
 | `ENABLE_BUILD_TOOLS`  | Install development tools if having problems installing modules | `FALSE`             |       |
-| `ENABLE_JEMALLOC`     | Enable high performance  memory allocator                       | `TRUE`              |       |
+| `ENABLE_MIMALLOC`     | Enable high performance  memory allocator                       | `TRUE`              |       |
 | `HOMEASSISTANT_MODE`  | Home Assistant Mode                                             | `NORMAL`            |       |
 | `HOMEASSISTANT_USER`  | Home Assistant User                                             | `homeassistant`     |       |
 | `HOMEASSISTANT_GROUP` | Home Assistant Group                                            | `homeassistant`     |       |
