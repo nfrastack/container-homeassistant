@@ -40,7 +40,7 @@ if var_true "${SKIP_PIP,,}" ; then skip_pip="--skip-pip"; fi
 
 print_start "Starting Home Assistant ${HOMEASSISTANT_VERSION}"
 source /opt/homeassistant/bin/activate && \
-exec s6-setuidgid "${HOMEASSISTANT_USER}" \
+HOME=/opt/homeassistant exec s6-setuidgid "${HOMEASSISTANT_USER}" \
                     /opt/homeassistant/bin/python3 \
                         -m homeassistant \
                         --config "${CONFIG_PATH}" \
