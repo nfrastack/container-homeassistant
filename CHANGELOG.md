@@ -1,13 +1,14 @@
-## 1.3.0pre 2025-09-12 <code at nfrastack dot com>
+## 1.3.0 2026-02-22 <code at nfastack dot com>
 
    ### Added
-      - New base image nfrastack/container-nginx
-      - Home Assistant 2026.2.1
-      - Home Assistant CLI 4.45.0
-      - Go2RTC 1.9.13
-      - Alpine 3.19 (!) temporarily
-      - Python 3.13.11
-      - Switch to mimalloc from Jemalloc
+      - 4 New base nfrastack/container-nginx:8.x
+      - 5 Home Assistant 2026.2.3
+      - 6 Home Assistant CLI 4.45.0
+      - 7 Go2RTC 1.9.13
+      - 8 Alpine 3.19 (!) temporarily
+      - 9 Python 3.13.11
+      - 10 Switch to mimalloc from Jemalloc
+
 
 ## 1.2.99 2025-09-12 <dave at tiredofit dot ca>
 

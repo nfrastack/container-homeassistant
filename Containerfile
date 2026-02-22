@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: © 2025 Nfrastack <code@nfrastack.com>
+# SPDX-FileCopyrightText: © 2026 Nfrastack <code@nfrastack.com>
 #
 # SPDX-License-Identifier: MIT
 
@@ -18,7 +18,7 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.2.1" \
+    HOMEASSISTANT_VERSION="2026.2.3" \
     HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
@@ -74,7 +74,9 @@ ARG \
     HOMEASSISTANT_MODULES_CORE=" \
                                 homeassistant.auth.mfa_modules.totp, \
                                 psycopg2 \
-                                "
+                                " \
+    HOMEASSISTANT_USER \
+    HOMEASSISTANT_GROUP
 
 COPY CHANGELOG.md /usr/src/container/CHANGELOG.md
 COPY LICENSE /usr/src/container/LICENSE
@@ -83,12 +85,18 @@ COPY README.md /usr/src/container/README.md
 ENV \
     HOMEASSISTANT_USER=${HOMEASSISTANT_USER:-"homeassistant"} \
     HOMEASSISTANT_GROUP=${HOMEASSISTANT_GROUP:-"homeassistant"} \
-    NGINX_ENABLE_CREATE_SAMPLE_HTML=FALSE \
-    NGINX_SITE_ENABLED=homeassistant \
-    NGINX_WORKER_PROCESSES=1 \
-    IMAGE_NAME=nfrastack/homeassistant
+    NGINX_PROXY_URL="http://localhost:[env:LISTEN_PORT]" \
+    IMAGE_NAME=nfrastack/homeassistant \
+    IMAGE_REPO_URL="https://github.com/nfrastack/container-homeassistant/"
 
 RUN echo "" && \
+    BUILD_ENV=" \
+                ENABLE_NGINX=FALSE \
+                10-nginx/NGINX_SITE_ENABLED='homeassistant' \
+                10-nginx/NGINX_MODE=proxy \
+                10-nginx/NGINX_PROXY_URL='http://localhost:[env:LISTEN_PORT]' \
+              " \
+              && \                
     CONTAINER_RUN_DEPS_ALPINE=" \
                                     git \
                                     grep \
@@ -109,6 +117,7 @@ RUN echo "" && \
                                     socat \
                                     tiff \
                                 " \
+                                && \
     \
     HOMEASSISTANT_BUILD_DEPS_ALPINE=" \
                                         build-base \
@@ -140,7 +149,7 @@ RUN echo "" && \
                                         postgresql-client \
                                         zlib-ng \
                                     " \
-                                && \
+                                  && \
     \
     HOMEASSISTANTCLI_BUILD_DEPS_ALPINE=" \
                                        " \
