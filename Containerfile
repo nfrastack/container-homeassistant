@@ -18,11 +18,11 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.2.3" \
+    HOMEASSISTANT_VERSION="2026.3.0" \
     HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
-    PYTHON_VERSION="3.13.11" \
+    PYTHON_VERSION="3.14.3" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
     HOMEASSISTANT_CLI_REPO_URL="https://github.com/home-assistant/cli" \
     HOMEASSISTANT_REPO_URL="https://github.com/home-assistant/core" \
@@ -85,13 +85,12 @@ COPY README.md /usr/src/container/README.md
 ENV \
     HOMEASSISTANT_USER=${HOMEASSISTANT_USER:-"homeassistant"} \
     HOMEASSISTANT_GROUP=${HOMEASSISTANT_GROUP:-"homeassistant"} \
-    NGINX_PROXY_URL="http://localhost:[env:LISTEN_PORT]" \
     IMAGE_NAME=nfrastack/homeassistant \
     IMAGE_REPO_URL="https://github.com/nfrastack/container-homeassistant/"
 
 RUN echo "" && \
     BUILD_ENV=" \
-                ENABLE_NGINX=FALSE \
+                10-nginx/ENABLE_NGINX=FALSE \
                 10-nginx/NGINX_SITE_ENABLED='homeassistant' \
                 10-nginx/NGINX_MODE=proxy \
                 10-nginx/NGINX_PROXY_URL='http://localhost:[env:LISTEN_PORT]' \
