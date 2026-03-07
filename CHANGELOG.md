@@ -1,3 +1,9 @@
+## 1.3.2 2026-03-07 <code at nfastack dot com>
+
+   ### Added
+      - HomeAssistant 2026.3.1
+
+
 ## 1.3.1 2026-03-05 <code at nfastack dot com>
 
    ### Added

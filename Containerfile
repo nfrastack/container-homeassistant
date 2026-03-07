@@ -18,7 +18,7 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.3.0" \
+    HOMEASSISTANT_VERSION="2026.3.1" \
     HOMEASSISTANT_CLI_VERSION="4.45.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
@@ -301,7 +301,7 @@ RUN echo "" && \
     LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
             uv pip install \
-                --compile \
+                --compile --system \
                 -r requirements.txt \
                 -r requirements_custom.txt \
                 && \
@@ -343,7 +343,7 @@ RUN echo "" && \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
         sudo -u "${HOMEASSISTANT_USER}" \
             uv pip install \
-                --compile \
+                --compile --system \
                 -r requirements.txt \
                 -r requirements_custom.txt \
                 && \
