@@ -18,8 +18,8 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.3.3" \
-    HOMEASSISTANT_CLI_VERSION="4.45.0" \
+    HOMEASSISTANT_VERSION="2026.4.0" \
+    HOMEASSISTANT_CLI_VERSION="5.0.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
     PYTHON_VERSION="3.14.3" \
@@ -37,7 +37,7 @@ ARG \
                                 roku, \
                                 tuya, \
                                 zha \
-                                " \
+                             " \
     HOMEASSISTANT_COMPONENTS_CORE=" \
                                     accuweather, \
                                     assist_pipeline, \
@@ -69,12 +69,12 @@ ARG \
                                     stream, \
                                     tts, \
                                     utility_meter, \
-                                    " \
+                                  " \
     HOMEASSISTANT_MODULES \
     HOMEASSISTANT_MODULES_CORE=" \
-                                homeassistant.auth.mfa_modules.totp, \
-                                psycopg2 \
-                                " \
+                                 homeassistant.auth.mfa_modules.totp, \
+                                 psycopg2 \
+                               " \
     HOMEASSISTANT_USER \
     HOMEASSISTANT_GROUP
 
@@ -95,7 +95,7 @@ RUN echo "" && \
                 10-nginx/NGINX_MODE=proxy \
                 10-nginx/NGINX_PROXY_URL='http://localhost:[env:LISTEN_PORT]' \
               " \
-              && \                
+              && \
     CONTAINER_RUN_DEPS_ALPINE=" \
                                     git \
                                     grep \
@@ -119,21 +119,36 @@ RUN echo "" && \
                                 && \
     \
     HOMEASSISTANT_BUILD_DEPS_ALPINE=" \
+                                        bluez-dev \
                                         build-base \
                                         cython \
                                         ffmpeg-dev \
-                                        gcc \
                                         g++ \
-                                        linux-headers \
+                                        gcc \
+                                        gdbm-dev \
+                                        gnupg \
                                         isa-l-dev \
                                         jpeg-dev \
+                                        libc-dev \
                                         libffi-dev \
                                         libjpeg-turbo-dev \
+                                        libnsl-dev \
+                                        libtirpc-dev \
+                                        linux-headers \
                                         make \
                                         mariadb-connector-c-dev \
                                         musl-dev \
                                         openblas-dev \
+                                        pax-utils \
                                         postgresql-dev \
+                                        scanelf \
+                                        sqlite-dev \
+                                        tar \
+                                        tcl-dev \
+                                        tk \
+                                        tk-dev \
+                                        util-linux-dev \
+                                        xz-dev \
                                         zlib-dev \
                                         zlib-ng-dev \
                                     " \
@@ -147,6 +162,7 @@ RUN echo "" && \
                                         mariadb-connector-c \
                                         postgresql-client \
                                         zlib-ng \
+                                        xz \
                                     " \
                                   && \
     \
@@ -157,34 +173,6 @@ RUN echo "" && \
     MIMALLOC_BUILD_DEPS_ALPINE=" \
                                     cmake \
                                     make \
-                                " \
-                                && \
-    PYTHON_BUILD_DEPS_ALPINE="  \
-                                bluez-dev \
-                                bzip2-dev \
-                                findutils \
-                                gcc \
-                                gdbm-dev \
-                                gnupg \
-                                libc-dev \
-                                libffi-dev \
-                                libnsl-dev \
-                                libtirpc-dev \
-                                linux-headers \
-                                make \
-                                ncurses-dev \
-                                openssl-dev \
-                                pax-utils \
-                                readline-dev \
-                                sqlite-dev \
-                                tar \
-                                tcl-dev \
-                                tk \
-                                tk-dev \
-                                util-linux-dev \
-                                xz \
-                                xz-dev \
-                                zlib-dev \
                                 " \
                                 && \
     \
@@ -199,68 +187,10 @@ RUN echo "" && \
                         HOMEASSISTANT_RUN_DEPS \
                         HOMEASSISTANTCLI_BUILD_DEPS \
                         MIMALLOC_BUILD_DEPS \
-                        PYTHON_BUILD_DEPS \
                         && \
-    mkdir -p /usr/src/python && \
-    curl -sSL https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz | tar xvfJ - --strip 1 -C /usr/src/python && \
-    cd /usr/src/python && \
-    case "$(container_info distro)" in \
-        alpine ) clib=musl ;; \
-        debian|ubuntu ) clib=gnu ;; \
-    esac ; \
-    ./configure \
-        --build="$(uname -m)-linux-${clib}" \
-        --enable-loadable-sqlite-extensions \
-        --enable-option-checking=fatal \
-        --enable-shared \
-        --with-lto \
-        --with-ensurepip \
-        && \
-    EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000" && \
-    LDFLAGS="${LDFLAGS:--Wl},--strip-all" && \
-    case "$(container_info arch)" in \
-        x86_64 | aarch64) EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer -mno-omit-leaf-frame-pointer" ;; \
-        * ) EXTRA_CFLAGS="${EXTRA_CFLAGS:-} -fno-omit-frame-pointer" ;; \
-    esac ; \
-    make \
-             -j $(nproc) \
-            "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-            "LDFLAGS=${LDFLAGS:-}" \
-            && \
-    rm python && \
-    make \
-            -j $(nproc) \
-            "EXTRA_CFLAGS=${EXTRA_CFLAGS:-}" \
-            "LDFLAGS=${LDFLAGS:--Wl},-rpath='\$\$ORIGIN/../lib'" \
-            python \
-            && \
-    make install && \
-    find /usr/local -depth \
-                            \( \
-                                \( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-                                -o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name 'libpython*.a' \) \) \
-                            \) -exec rm -rf '{}' + \
-                            && \
-    \
-    find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
-                | tr ',' '\n' \
-                | sort -u \
-                | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-                | xargs -rt apk add --no-network --virtual .python-rundeps \
-                && \
-    export PYTHONDONTWRITEBYTECODE=1 && \
-    \
-    for src in idle3 pip3 pydoc3 python3 python3-config; do \
-        dst="$(echo "$src" | tr -d 3)"; \
-        [ -s "/usr/local/bin/$src" ]; \
-        [ ! -e "/usr/local/bin/$dst" ]; \
-        ln -svT "$src" "/usr/local/bin/$dst"; \
-    done && \
-    \
+    package build python "${PYTHON_VERSION}" && \
     echo -e "[global]\ndisable-pip-version-check = true\nextra-index-url = https://wheels.home-assistant.io/musllinux-index/\nno-cache-dir = false\nprefer-binary = true" > /etc/pip.conf && \
     pip install --break-system-packages uv && \
-    \
-    container_build_log add "Python" "${PYTHON_VERSION}" "python.org" && \
     \
     clone_git_repo "${MIMALLOC_REPO_URL}" "${MIMALLOC_VERSION}" && \
     mkdir -p out/release && \
@@ -299,66 +229,21 @@ RUN echo "" && \
     cp requirements_custom.txt /container/build/"${IMAGE_NAME/\//_}"/ && \
     export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
     LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
-        MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
-            uv pip install \
-                --compile --system \
-                -r requirements.txt \
-                -r requirements_custom.txt \
-                && \
-    \
-    cd /usr/src/homeassistant && \
-    chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
-    sudo -u "${HOMEASSISTANT_USER}" \
-        sed -i \
-            -e '/"google_translate",/d' \
-            -e '/"met",/d' \
-            -e '/"radio_browser",/d' \
-            -e '/"shopping_list",/d' \
-            /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
-    \
-    python3 -m venv /opt/homeassistant && \
-    chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
-    cd /usr/src/homeassistant && \
-    export HOMEASSISTANT_COMPONENTS_CORE=$(echo components.${HOMEASSISTANT_COMPONENTS_CORE} | sed -e 's|, |\| components.|g' -e 's| ||g') && \
-    echo "## Core" >> requirements_custom.txt && \
-    awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS_CORE"]' requirements_all.txt >> requirements_custom.txt && \
-    echo "## Core Modules" >> requirements_custom.txt && \
-    export HOMEASSISTANT_MODULES_CORE=$(echo ${HOMEASSISTANT_MODULES_CORE} | sed -e 's|, |\| |g' -e 's| ||g') ; \
-    awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES_CORE"]' requirements_all.txt >> requirements_custom.txt && \
-    if [ -n "${HOMEASSISTANT_COMPONENTS}" ]; then \
-        echo "## User Components" >> requirements_custom.txt ; \
-        export HOMEASSISTANT_COMPONENTS=$(echo components.${HOMEASSISTANT_COMPONENTS} | sed -e 's|, |\| components.|g' -e 's| ||g') ; \
-        awk -v RS= '$0~ENVIRON["HOMEASSISTANT_COMPONENTS"]' requirements_all.txt >> requirements_custom.txt ; \
-    fi; \
-    if [ -n "${HOMEASSISTANT_MODULES}" ]; then \
-        echo "## User Modules" >> requirements_custom.txt ; \
-        export HOMEASSISTANT_MODULES=$(echo ${HOMEASSISTANT_MODULES} | sed -e 's|, |\| |g' -e 's| ||g') ; \
-        awk -v RS= '$0~ENVIRON["HOMEASSISTANT_MODULES"]' requirements_all.txt >> requirements_custom.txt ; \
-    fi; \
-    echo "homeassistant==${HOMEASSISTANT_VERSION}" >> requirements_custom.txt && \
-    cp requirements_custom.txt /container/build/"${IMAGE_NAME/\//_}"/ && \
-    export MAKEFLAGS="-j$(nproc) -l$(nproc)" && \
-    LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
         CFLAGS="-Wno-int-conversion" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
-        sudo -u "${HOMEASSISTANT_USER}" \
             uv pip install \
-                --compile --system \
+                --compile \
                 -r requirements.txt \
                 -r requirements_custom.txt \
                 && \
-    \
-    cd /usr/src/homeassistant && \
     chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
-    \
     sudo -u "${HOMEASSISTANT_USER}" \
         sed -i \
-                    -e '/"google_translate",/d' \
-                    -e '/"met",/d' \
-                    -e '/"radio_browser",/d' \
-                    -e '/"shopping_list",/d' \
-                /opt/homeassistant/lib/python$(python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
-    \
+                -e '/"google_translate",/d' \
+                -e '/"met",/d' \
+                -e '/"radio_browser",/d' \
+                -e '/"shopping_list",/d' \
+            /opt/homeassistant/lib/python$(/opt/homeassistant/bin/python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     container_build_log add "Home Assistant" "${HOMEASSISTANT_VERSION}" "${HOMEASSISTANT_REPO_URL}" && \
     \
     package build go && \
@@ -382,7 +267,6 @@ RUN echo "" && \
                     HOMEASSISTANT_BUILD_DEPS \
                     HOMEASSISTANTCLI_BUILD_DEPS \
                     MIMALLOC_BUILD_DEPS \
-                    PYTHON_BUILD_DEPS \
                     && \
     rm -rf \
             /root/go \

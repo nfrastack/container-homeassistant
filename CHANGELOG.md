@@ -1,3 +1,12 @@
+## 1.3.5 2026-04-01 <code at nfastack dot com>
+
+   ### Added
+      - Alpine 3.23 base
+      - Python 3.14.3
+      - Home Assistant CLI 5.0.0
+      - Home Assistant 2024.4.0
+
+
 ## 1.3.4 2026-03-21 <code at nfastack dot com>
 
    ### Added
