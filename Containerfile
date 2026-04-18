@@ -18,11 +18,11 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.4.2" \
+    HOMEASSISTANT_VERSION="2026.4.3" \
     HOMEASSISTANT_CLI_VERSION="5.0.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
-    PYTHON_VERSION="3.14.3" \
+    PYTHON_VERSION="3.14.4" \
     GO2RTC_REPO_URL="https://github.com/AlexxIT/go2rtc" \
     HOMEASSISTANT_CLI_REPO_URL="https://github.com/home-assistant/cli" \
     HOMEASSISTANT_REPO_URL="https://github.com/home-assistant/core" \
@@ -121,6 +121,8 @@ RUN echo "" && \
     HOMEASSISTANT_BUILD_DEPS_ALPINE=" \
                                         bluez-dev \
                                         build-base \
+                                        clang \
+                                        compiler-rt \
                                         cython \
                                         ffmpeg-dev \
                                         g++ \
@@ -143,6 +145,8 @@ RUN echo "" && \
                                         postgresql-dev \
                                         scanelf \
                                         sqlite-dev \
+                                        speex-dev \
+                                        speexdsp-dev \
                                         tar \
                                         tcl-dev \
                                         tk \
@@ -231,6 +235,8 @@ RUN echo "" && \
     LD_PRELOAD="/usr/local/lib/libmimalloc.so.2" \
         CFLAGS="-Wno-int-conversion" \
         MALLOC_CONF="background_thread:true,metadata_thp:auto,dirty_decay_ms:20000,muzzy_decay_ms:20000" \
+        CC=clang \
+        CXX=clang++ \
             uv pip install \
                 --compile \
                 -r requirements.txt \
