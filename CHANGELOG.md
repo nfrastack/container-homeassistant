@@ -1,3 +1,9 @@
+## 1.3.6 2026-04-26 <code at nfastack dot com>
+
+   ### Added
+      - Home Assistant 2026.4.4
+
+
 ## 1.3.5 2026-04-01 <code at nfastack dot com>
 
    ### Added
