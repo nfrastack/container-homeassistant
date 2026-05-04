@@ -1,3 +1,9 @@
+## 1.3.7 2026-05-04 <code at nfrastack dot com>
+
+   ### Changed
+      - Stop UV from installing packaged python breaking symbolic links
+
+
 ## 1.3.6 2026-04-26 <code at nfastack dot com>
 
    ### Added
