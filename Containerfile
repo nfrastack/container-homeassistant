@@ -205,7 +205,7 @@ RUN echo "" && \
     container_build_log add "MimAlloc" "${MIMALLOC_VERSION}" "${MIMALLOC_REPO_URL}" && \
     \
     clone_git_repo "${HOMEASSISTANT_REPO_URL}" "${HOMEASSISTANT_VERSION}" /usr/src/homeassistant && \
-    uv venv /opt/homeassistant && \
+    UV_PYTHON_DOWNLOADS=never uv venv /opt/homeassistant --python /usr/local/bin/python$(echo ${PYTHON_VERSION} | cut -d. -f1-2) && \
     chown -R "${HOMEASSISTANT_USER}":"${HOMEASSISTANT_GROUP}" /opt/homeassistant && \
     source /opt/homeassistant/bin/activate && \
     cd /usr/src/homeassistant && \
