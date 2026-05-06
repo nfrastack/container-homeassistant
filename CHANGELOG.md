@@ -1,3 +1,10 @@
+## 1.3.8 2026-05-06 <code at nfrastack dot com>
+
+   ### Added
+      - HomeAssistant 2026.5.0
+      - HomeAssistant CLI 5.1.0
+
+
 ## 1.3.7 2026-05-04 <code at nfrastack dot com>
 
    ### Changed
