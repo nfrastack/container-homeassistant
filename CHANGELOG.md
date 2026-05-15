@@ -1,3 +1,9 @@
+## 1.3.10 2026-05-15 <code at nfrastack dot com>
+
+   ### Added
+      - HomeAssistant 2026.5.2
+
+
 ## 1.3.9 2026-05-08 <code at nfrastack dot com>
 
    ### Added
