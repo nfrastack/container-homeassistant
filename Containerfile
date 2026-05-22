@@ -18,7 +18,7 @@ LABEL \
         org.opencontainers.image.licenses="MIT"
 
 ARG \
-    HOMEASSISTANT_VERSION="2026.5.3" \
+    HOMEASSISTANT_VERSION="2026.5.4" \
     HOMEASSISTANT_CLI_VERSION="5.1.0" \
     GO2RTC_VERSION="v1.9.14" \
     MIMALLOC_VERSION="v3.0.11" \
