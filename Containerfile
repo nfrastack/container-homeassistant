@@ -252,7 +252,7 @@ RUN echo "" && \
             /opt/homeassistant/lib/python$(/opt/homeassistant/bin/python3 --version | awk '{print $2}' | cut -d . -f 1-2)/site-packages/homeassistant/components/onboarding/views.py && \
     container_build_log add "Home Assistant" "${HOMEASSISTANT_VERSION}" "${HOMEASSISTANT_REPO_URL}" && \
     \
-    package build go && \
+    package build go buildtime && \
     clone_git_repo "${HOMEASSISTANT_CLI_REPO_URL}" "${HOMEASSISTANT_CLI_VERSION}" && \
     go build \
             -ldflags '-s' \
