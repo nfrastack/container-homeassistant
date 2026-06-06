@@ -1,3 +1,9 @@
+## 1.3.14 2026-06-06 <code at nfrastack dot com>
+
+   ### Added
+      - Home Assistant 2026.6.1
+
+
 ## 1.3.13 2026-06-03 <code at nfrastack dot com>
 
    ### Added
