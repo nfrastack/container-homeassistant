@@ -1,3 +1,11 @@
+## 1.3.17 2026-07-21 <code at nfrastack dot com>
+
+   ### Added
+      - Home Assistant 2026.7.3
+      - Home Assistant CLI 5.2.0
+      - Mimalloc 3.4.3
+
+
 ## 1.3.16 2026-06-12 <code at nfrastack dot com>
 
    ### Added
